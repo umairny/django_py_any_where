@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+{% load humanize %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
+{% block content %}
+
+<h4 class="diplay-4" >{{ title }}</h4>
+<hr />
+    <div class="container-fluid card-columns">
+
+        {% include "auctions/items.html" %}
+    
+    </div>
+
+{% endblock %}

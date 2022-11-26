@@ -1,0 +1,34 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div class="content">
+    {% if user.is_authenticated %}
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+                {{ form.as_p }}
+        </div>
+        <div class="form-group">
+            <input class="btn btn-primary" type="submit" value="Post">           
+        </div>
+
+    </form>
+    {% include "network/posts.html" %}
+
+   {% else %}
+    <div class="container">
+    <div>
+        <h1 class="display-4">Social Network example.</h1>
+        <p class="lead">In this app you can post, edit post, comment on post and Like the post. Also you can follow the others, see your followers posts and edit your profile.</p>
+        <hr class="my-2">
+        <p><a href="{% url 'login' %}?next={% url 'network:index' %}">Login</a> to continue...</p>
+    </div>
+
+    </div>
+
+    {% endif %}
+    <script src="{% static 'network/main.js' %}"></script>
+
+</div>
+{% endblock %}
+

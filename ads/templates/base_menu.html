@@ -1,0 +1,43 @@
+{% extends "base_template.html" %}
+{% block navbar %}
+{% load app_tags %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+      <a class="navbar-brand" href="/ads">Home</a>
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+    {% if user.is_authenticated %}
+      {% url 'ads' as ads %}
+      <li {% if request.get_full_path == ads %} class="nav-item active"{% endif %}>
+          <a class="nav-link" href="{% url 'ads:all' %}">Hi: {{ user }}</a></li>
+    {% else %}
+      <li class="nav-item"><a class="nav-link" href="#">user: mike, pw: mike123 | user: emma, pw: emma123, | user: harry, pw: harry123</a></li>
+    {% endif %}
+    </ul>
+    <ul class="navbar-nav my-2 my-lg-0">
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'ads:ad_create' %}">Create Ad</a>
+        </li>
+        <li class="dropdown">
+            <a href="#" data-toggle="dropdown" class="btn btn-dark dropdown-toggle">
+                <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret"></b>
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a>
+            </div>
+        </li>
+        {% else %}
+        <li class="nav-item">
+        <a class="nav-link" href="{% url 'login' %}?next={% url 'ads:all' %}">Login</a>
+        </li>
+        {% endif %}
+    </ul>
+  </div>
+</div>
+</nav>
+{% endblock %}

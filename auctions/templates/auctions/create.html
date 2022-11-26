@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block content %}
+
+    <h4 class="diplay-4" >Create New.</h4>
+    <hr />
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            {% csrf_token %} 
+            {{ form.as_p }}
+        </div>
+        <input class="btn btn-primary" type="submit" value="Create listing">
+    </form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base_template.html' %}
+{% load static %}
+
+{% block title %}
+Wiki
+{% endblock  %}
+
+{% block head %}
+        <link href="{% static 'wiki/styles.css' %}" rel="stylesheet">
+{% endblock  %}
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark mb-2">
+    <!-- Brand -->
+    <a class="navbar-brand" href="#">Wiki</a>
+
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'wiki:index' %}">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'wiki:add_page' %}">Create New Page</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'wiki:random' %}">Random Page</a>
+        </li>
+        </ul>
+
+    </div>
+        <form class="d-flex" action="{% url 'wiki:search' %}">
+            <input class="form-control me-2" type="search" name="q" placeholder="Search">
+            <button type="submit" name="Search" class="btn btn-outline-success">Search</button>
+        </form>
+    </nav>
+                    
+ {% endblock %}

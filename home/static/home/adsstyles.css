@@ -1,0 +1,36 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.card-img-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  height: 20rem;
+  padding: 20px;
+  margin-bottom: 5px;
+}
+.card-img-coustom {
+  height: 100%;
+}
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 20rem;
+  background-color: gray;
+  color: lightgray;
+}
+
+.useredit {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px;
+}
+
+.favorite {
+  margin: 10px;
+}

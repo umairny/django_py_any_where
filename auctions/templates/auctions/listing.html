@@ -1,0 +1,99 @@
+{% extends "auctions/layout.html" %}
+
+{% block content %}
+<h2>{{list.title}}</h2>
+<div class="card mb-3" style="max-width: 100%;">
+    <div class="row no-gutters">
+        <div class="col-md-4">
+            {% if list.content_type %}
+                <img style="width:100%; border:3px solid black;" src="{% url 'auctions:list_picture' list.id %}">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <p class="card-text">Details: {{list.details}} </p>
+                <hr />
+                <p>Item price: &#36;{{list.price}} <span style="color:red; float:right;">Top bid: &#36;{{ list.cur_price }} <br /> Total bids: {{ list.no_of_bids }}</span> </p>
+                <br />
+                <hr />
+                                
+                <p><small>Category: </small>{{list.category}} </p>
+                
+                <p class="mt-2"><small>Posted by: </small>{{ list.user }} <span style="float:right; color:gray;"> <small>Created at: {{list.created}}</small> </span> </p>
+                <hr />
+
+             {% if not list.closed %}
+             {% if list.user != request.user %}
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <input class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="your {{ field.html_name }}" required /> 
+                        </div>
+                        <input class="btn btn-primary" type="submit" value="Bid">
+                        <div style="color:red;">{{ field.errors }}</div>
+                    {% endfor %}
+                </form>
+                <hr />
+                {% endif %}
+
+                {% if user in list.watchlistuser.all %}
+                <a name="watchlist" class="btn btn-info" href="{% url 'auctions:watchlist' list.id %}" role="button">Remove
+                    Watchlist</a>
+                {% else %}
+                <a name="watchlist" class="btn btn-info" href="{% url 'auctions:watchlist' list.id %}" role="button">Add
+                    Watchlist</a>
+                {% endif %}
+
+                {% if list.user == request.user %}
+                    <a name="close" class="btn btn-danger" href="{% url 'auctions:closed' list.id %}" role="button">Close</a>
+                {% endif %}
+                <hr>
+                <a name="comment" class="btn btn-info" href="{% url 'auctions:comment' list.id %}" role="button">Comments</a>
+            {% else %}
+                    {% if request.user == list.user %}
+                        {% if list.current_winning_bidder %}
+                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
+                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
+                            <h4>Your item was SOLD to {{ list.current_winning_bidder }} in &#36;{{ list.cur_price }}</h4>
+                        {% else %}
+                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
+                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
+                            <div>Bidding Closed. Sorry <strong> {{ list.user }} </strong> Nobody showed any interest.</div>
+                        {% endif %}
+                    {% else %}
+                        {%  if list.current_winning_bidder == user %}
+                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
+                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">You Won</h1></div>
+                            <h4>Congratulations!!! You have won this auction. In &#36;{{ list.cur_price }}</h4>
+                        {% elif list.current_winning_bidder is None %}
+                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
+                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
+                            <div>Nobody showed any interest on this item and it has been closed.</div>
+                        {% else %}
+                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
+                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
+                            <div>An anonymous user has won this auction!</div>
+                        {% endif %}
+                    {% endif %}
+            {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+    <h4 class="mt-4">Comments:</h4>
+    <hr />
+            <div class="comment">
+            {% for comment in list.comments.all %}
+                <div class="row each-comment">
+                    <div class="col">
+                        <p><strong style="color: gray;">{{ comment.user }}</strong> commented: <span class="small" style="color:gray; float: right;"> {{ comment.com_time }} </span></p>
+                        <h5> {{ comment.comment }}</h5>
+                        <hr />
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+
+{% endblock %}

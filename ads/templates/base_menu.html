@@ -14,8 +14,6 @@
       {% url 'ads' as ads %}
       <li {% if request.get_full_path == ads %} class="nav-item active"{% endif %}>
           <a class="nav-link" href="{% url 'ads:all' %}">Hi: {{ user }}</a></li>
-    {% else %}
-      <li class="nav-item"><a class="nav-link" href="#">user: mike, pw: 3256mike | user: emma, pw: 1254emma, | user: harry, pw: 9856harr</a></li>
     {% endif %}
     </ul>
     <ul class="navbar-nav my-2 my-lg-0">

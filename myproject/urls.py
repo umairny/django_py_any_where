@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.static import serve
-
 import os
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    re_path(r'^_nested_admin/', include('nested_admin.urls')),
     path("accounts/", include("django.contrib.auth.urls")),  # Keep
     path("", include("home.urls")),
     path("wiki/", include("wiki.urls")),

@@ -1,67 +1,93 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html>
-<head>
-<!-- Edit dj4e-samples/settings.py and add APP_NAME = 'DJ4E Samples' or similar -->
-<title>{% block title %}{{ settings.APP_NAME }}{% endblock %}</title>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
-
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/v4-shims.css">
-
-<link href="{% static 'home/styles.css' %}" rel="stylesheet">    
-<link href="{% static 'home/adsstyles.css' %}" rel="stylesheet">    
-
-{% block head %} {% endblock %}
-
-</head>
-<body>
-<div class="navbar navbar-expand-lg navbar-light bg-ligh">
-  <ul class="navbar-nav m-auto">
-    <li class="nav-item">
-      <a class="nav-link" href="/"><i class="fa fa-home" aria-hidden="true"></i>
-        Go back to main projects page<span class="sr-only">(current)</span></a>
-    </li>
-  </ul>
-</div>
-{% block navbar %} {% endblock %}
-<div class="container">
-{% block welcome %} {% endblock %}
-{% block messages %}
-    {% if messages %}
-    {% for msg in messages %}
-        <div class="alert alert-{{msg.level_tag}}" role="alert">
-        {{msg.message}}
-        </div>
-    {% endfor %}
-    {% endif %}
-{% endblock %}
-{% block content %}
-{% endblock %}
-</div>
-
-{% block footer %} {% endblock %}
-
-
-{% block script %} {% endblock %}
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-<script src="https://maxcdn.bootstrapcd
+<html lang="en">
+  <head>
+    <!-- Edit dj4e-samples/settings.py and add APP_NAME = 'DJ4E Samples' or similar -->
+    <meta charset="UTF-8" />
+    <meta name="description" content="Django Projects" />
+    <meta name="keywords" content="HTML, CSS, JavaScript, Python, Django" />
+    <meta name="author" content="Umair Ahmad" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+        {{ settings.APP_NAME }}
+      {% endblock title %}
+    </title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.8.1/css/v4-shims.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap"
+          rel="stylesheet"/>
+    <link href="{% static 'home/styles.css' %}" rel="stylesheet" />
+    <link href="{% static 'home/adsstyles.css' %}" rel="stylesheet" />
+    {% block head %}
+    {% endblock head %}
+  </head>
+  <body {% block bg %}class="area"{% endblock bg %}>
+    {% block bg-anim %}
+      <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    {% endblock bg-anim %}
+    <div class="navbar navbar-expand-lg navbar-light bg-light p-0">
+      <ul class="navbar-nav m-auto">
+        <li class="nav-item">
+          <a class="nav-link p-1" href="#">
+          Please login to see full features of the apps.<span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+    </div>
+    {% block navbar %}
+    {% endblock navbar %}
+    <div class="container">
+      {% block welcome %}
+      {% endblock welcome %}
+      {% block messages %}
+        {% if messages %}
+          {% for msg in messages %}<div class="alert alert-{{ msg.level_tag }}" role="alert">{{ msg.message }}</div>{% endfor %}
+        {% endif %}
+      {% endblock messages %}
+      {% block content %}
+      {% endblock content %}
+    </div>
+    {% block footer %}
+      <div class="fixed-btn">
+        <a class="text-info" href="/">
+          <p class="go-home">Go back</p>
+          <div class="fixed-btn-circ">
+            <i class="fa fa-home fa-2x home-icon" aria-hidden="true"></i>
+          </div>
+        </a>
+      </div>
+    {% endblock footer %}
+    {% block script %}
+    {% endblock script %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcd
   <script>
     $(".nav .nav-item").on("click", function(){
       $(".nav").find(".active").removeClass("active");
       $(this).addClass("active");
     });
-  </script>
+</script>
 </body>
 </html>

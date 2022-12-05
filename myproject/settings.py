@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'social_django',
     'taggit',
+    'nested_admin',
 
     #apps
     'wiki.apps.WikiConfig',
@@ -46,7 +47,7 @@ INSTALLED_APPS = [
 ]
 
 # When we get to crispy forms :)
-CRISPY_TEMPLATE_PACK = 'bootstrap3'  # Add
+CRISPY_TEMPLATE_PACK = 'bootstrap4'  # Add
 
 # When we get to tagging
 TAGGIT_CASE_INSENSITIVE = True

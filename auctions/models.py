@@ -47,7 +47,7 @@ class Listing(models.Model):
         return max([bid.bid for bid in self.bid_list.all()]+[self.price])
 
     def __str__(self):
-        return f"{self.id} {self.user} {self.title} {self.details} {self.category} {self.price} {self.picture} {self.closed} {self.watchlistuser}"
+        return f"{self.id} {self.title}"
 
 
 class Bid(models.Model):

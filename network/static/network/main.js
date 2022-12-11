@@ -53,6 +53,28 @@ function like(id) {
    
 }
 
+// follow unfollow users
+function follow(id) {
+    console.log(id);
+    //const likebtn = document.querySelector(`#like${id}`)
+    const total_follow = document.querySelector(`#total_follower`)
+    const followBtn = document.querySelector(`#follow${id}`)
+    //console.log(followBtn);
+    fetch(id+'/follow', {
+        method: 'PUT',
+        body: JSON.stringify({follow: "follow", user_id: id})
+        })
+        .then((res) => res.json())
+        .then((res) => {
+            console.log(res)
+            if (res.status == 201) {
+                total_follow.innerHTML = res.total_follower;
+                followBtn.innerHTML = res.follow;
+            }
+        })
+   
+}
+
 
 // Edit the current post
 function edit(id) {

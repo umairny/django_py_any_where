@@ -21,19 +21,20 @@
             <li class="list-group-item">Email: {{ profile.user.email }}</li>
             <li class="list-group-item">Location: {{ profile.location }}</li>
             <li class="list-group-item">Date of birth: {{ profile.birth_date }}</li>
-            <li class="list-group-item">Followers: {{ profile.follow.count }}</li>
+            <li class="list-group-item">Followers: <span id="total_follower"> {{ profile.follow.count }}</span></li>
         </ul>
         <div class="card-body">
             {% if user == profile.user %}
-            <a href="{% url 'network:edit_profile' profile.user.id %}" class="card-link">Edit Profile</a>
+                <a href="{% url 'network:edit_profile' profile.user.id %}" class="card-link">Edit Profile</a>
             {% else %}
-            {% if ctx %}
-                <a href="{% url 'network:follow' profile.user.id %}" class="btn btn-info" name="follow">Unfollow</a>
-            {% else %}
-                <a href="{% url 'network:follow' profile.user.id %}" class="btn btn-info" name="follow">Follow</a>
+                <button onclick="follow({{profile.user.id}})" class="btn btn-info">
+                    {% if follower %}
+                        <span id="follow{{profile.user.id}}">Unfollow</span>
+                    {% else %}
+                        <span id="follow{{profile.user.id}}">Follow</span>
+                    {% endif %}
+                </button>
             {% endif %}
-            {% endif %}
-            
         </div>
     </div>
 </div>
@@ -44,4 +45,7 @@
     
     {% include "network/posts.html" %}
 </div>
+<script src="{% static 'network/main.js' %}"></script>
 {% endblock %}
+
+

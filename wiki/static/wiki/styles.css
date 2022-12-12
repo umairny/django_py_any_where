@@ -7,8 +7,6 @@ body {
     margin: auto;
     color: black;
 }
-
-
 a {
     color: gray;
     text-decoration: none;
@@ -28,4 +26,8 @@ textarea{
     border: 1px gray solid;
     border-radius: 5px;
     padding: 5px;
+}
+
+.main-content{
+    margin-top: 80px;
 }

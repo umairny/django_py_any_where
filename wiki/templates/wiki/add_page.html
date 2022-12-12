@@ -2,6 +2,7 @@
 
 
 {% block content %}
+<div class="main-content">
   <form method="post">
     {% csrf_token %}
       <h3>Create new page:</h3>
@@ -19,6 +20,5 @@
       <br>
         <input class="save btn btn-info" type="submit" value="Save"/>
   </form>
-
-
+</div>
 {% endblock %}

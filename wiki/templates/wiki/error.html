@@ -5,6 +5,8 @@ Error
 {% endblock %}
 
 {% block content %}
-<h1 class="error">{{message}}</h1>
-<a class="btn btn-danger" href={% url 'wiki:index' %}> Go back home </a>
+<div class="main-content">
+    <h1 class="error">{{message}}</h1>
+    <a class="btn btn-danger" href={% url 'wiki:index' %}> Go back home </a>
+</div>
 {% endblock %}

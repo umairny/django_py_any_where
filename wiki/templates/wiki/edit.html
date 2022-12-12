@@ -1,6 +1,7 @@
 {% extends "wiki/layout.html" %}
 
 {% block content %}
+<div class="main-content">
     <form method="POST">
         {% csrf_token %}
         <h3>Title: <span style="color:red"> {{title}} </span></h3>
@@ -11,4 +12,5 @@
         <br>
         <input class="save btn btn-info" type="submit" value="Save"/>
     </form>
+</div>
 {% endblock %}

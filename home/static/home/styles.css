@@ -50,12 +50,10 @@ body {
   flex-direction: column;
 }
 .main-head h1 {
-  border-bottom: #efefef solid 2px;
-  margin: 20px;
-  padding: 20px;
+  color: aqua;
 }
 .main-head p {
-  padding: 20px;
+  color: blanchedalmond;
 }
 ol{
   padding-left: 1em;
@@ -197,3 +195,6 @@ ol{
     border-radius: 0;
   }
 }
+
+
+/* footer styles */

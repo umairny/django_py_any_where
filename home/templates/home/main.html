@@ -26,8 +26,10 @@
 {% endblock navbar %}
 {% block content %}
     <div class="text-light main-head" id="home">
-        <h1 class="display-4">{{ context.list.heading }} Django Projects</h1>
-        <p class="lead">Here are some apps created with the django framework.</p>
+        <h1 class="display-3">Umair Ahmad</h1>
+        <p>graphic designer / web developer</p>
+        <h1 class="display-5">My backend projects.</h1>
+        <p>Here are some apps created with the python django framework.</p>
     </div>
 
     {% for head in project_list %}
@@ -71,4 +73,46 @@
     {% endfor %}
 {% endblock content %}
 {% block footer %}
+<footer class="bg-dark text-light">
+    <div class="container">
+        <div class="row p-4">
+          <div class="col-sm">
+            <h3>Stay in touch</h3>
+            <h1 class="pl-2"><i class="fa fa-arrow-down" aria-hidden="true"></i></h1>
+            <p>Queens, NYC, USA</p>
+            <h3 class="pl-5"><i class="fa fa-arrow-down" aria-hidden="true"></i></h3>
+            <a href="mailto:umairny1@gmail.com" class="nav-link text-light">umairny1@gmail.com</a>
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link text-info" href="https://twitter.com/UmairAh04797202"><i class="fa fa-twitter"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-info" href="https://www.linkedin.com/in/umairny/"><i class="fa fa-linkedin"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-info" href="https://www.youtube.com/@umair4ahmad"><i class="fa fa-youtube"></i></a>
+                </li>
+            </ul>
+          </div>
+          <div class="col-sm">
+                <h3>about me</h3
+                <p>I'm a graphic designer and web developer based in NYC, USA.</p>
+                <p>
+                    Since 2019, I've enjoyed turning complex problems into simple,
+                    beautiful and intuitive designs.
+                    I’ve been designing graphics for about 18 years now.
+                    Started when I was 21, and I quickly found passion for the work,
+                </p>
+          </div>
+          <div class="col-sm">
+            <p>
+                and spent almost my entire free time working on projects.
+                Now, I am looking for a job in a webdesign studio, or in a well-established IT company.
+                In order to further develop my designing skills and work on major projects.
+                I work mostly with Adobe, but I am eager to learn working with other software programs.
+            </p>
+          </div>
+        </div>
+    </div>
+</footer>
 {% endblock footer %}

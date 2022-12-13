@@ -41,7 +41,6 @@ body {
   text-shadow: #efefef 0px 0px 3px;
 }
 .main-head {
-  color: #efefef;
   height: 50vh;
   width: 100%;
   display: flex;
@@ -196,5 +195,9 @@ ol{
   }
 }
 
+@media (max-width: 650px) {
+  .main-head {
+    height: 100vh;
+  }
+}
 
-/* footer styles */

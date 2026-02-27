@@ -23,6 +23,11 @@ class CreateForm(forms.ModelForm):
     class Meta:
         model = Ad
         fields = ["title", "text", "price", "picture"]  # Picture is manual
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({'class': 'form-ads-input'})
         
 
     # Validate the size of the picture

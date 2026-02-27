@@ -1,127 +1,151 @@
 {% extends "base_menu.html" %}
 {% load humanize %}
+{% load app_tags %}
 <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
 
 {% block content %}
-<nav class="navbar navbar-expand-lg border-bottom mb-3">
-<div class="navbar-brand navbar-nav mr-auto">Ads</div>
-<div class="form-inline my-2 my-lg-0">
-  <!-- https://www.w3schools.com/howto/howto_css_search_button.asp -->
-  <form class="form-inline my-2 my-lg-0">
-    <input
-      class="form-control mr-sm-2"
-      type="search"
-      placeholder="Search.."
-      name="search"
-      {% if search %}
-        value="{{ search }}"
-      {% endif %}
-    />
-    <button  class="btn btn-outline-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
-    <a class="btn btn-outline-info ml-2 my-2 my-sm-0" href="{% url 'ads:all' %}"><i class="fa fa-undo"></i></a>
-  </form>
-</div>
-</nav>
-
-{% if ad_list %}
-<div class="card-deck" style="justify-content: center;"> 
-  {% for ad in ad_list %}
-  <div class="card mb-4" style="min-width:18em; max-width:22em;">
-    <div class="card-img-box">
-      {% if ad.content_type %}
-        <img class="card-img-coustom" src="{% url 'ads:ad_picture' ad.id %}" />
-      {% else %}
-        <div class="placeholder">No image to show</div>
-      {% endif %}
+<div class="mb-5 py-4 content">
+  <div class="d-flex justify-content-between align-items-center mb-5">
+    <div>
+      <span class="badge badge-soft-primary px-3 py-2 rounded-pill mb-3 font-weight-bold text-uppercase tracking-wider" style="background: rgba(79, 70, 229, 0.1); color: var(--ads-primary); font-size: 0.75rem;">
+        {% if is_favorites_page %}Your Collection{% else %}Premium Marketplace{% endif %}
+      </span>
+      <h1 class="display-4 font-weight-bold mb-2" style="background: linear-gradient(135deg, #1f2937 0%, #4b5563 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+        {% if is_favorites_page %}Saved Ads{% else %}Discovery{% endif %}
+      </h1>
+      <p class="text-muted lead mb-0">
+        {% if is_favorites_page %}Manage and track all the listings you've saved for later.{% else %}Discover exceptional listings from verified sellers in your community.{% endif %}
+      </p>
     </div>
-    <div class="card-body">
-      <a class="text-info" href="{% url 'ads:ad_detail'  ad.id %}"> 
-        <h5 class="card-title">{{ ad.title }}</h5>
-      </a>
-      <p class="card-text">{{ ad.text | truncatewords:"7" }}</p>
-      <h5 class="card-text">Price: {{ ad.price }}</h5>
-      <hr />
-
-      {% if user.is_authenticated %}
-      <div class="favorite">
-        Favorite:
-        <!-- Two hrefs with two stacked icons each - one showing and one hidden -->
-        <a
-          href="#"
-          onclick="favPost('{% url 'ads:ad_unfavorite' ad.id %}', {{ ad.id }} );return false;"
-          {% if ad.id not in favorites %}
-          style="display: none"
-          {% endif %}
-          id="favorite_star_{{ad.id}}">
-          <span class="fa-stack" style="vertical-align: middle">
-            <i class="fa fa-star fa-stack-1x" style="color: orange"></i>
-            <i class="fa fa-star-o fa-stack-1x"></i>
-          </span>
-        </a>
-        <!-- the second href -->
-        <a
-          href="#"
-          onclick="favPost('{% url 'ads:ad_favorite' ad.id %}', {{ ad.id }} );return false;"
-          {% if ad.id in favorites %}
-          style="display: none"
-          {% endif %}
-          id="unfavorite_star_{{ad.id}}">
-          <span class="fa-stack" style="vertical-align: middle">
-            <i class="fa fa-star fa-stack-1x" style="display: none; color: orange"></i>
-            <i class="fa fa-star-o fa-stack-1x"></i>
-          </span>
-        </a>
-        </div>
-      {% endif %}
-      {% if ad.owner == user %}
-      <div class="useredit">
-        <a class="text-primary" href="{% url 'ads:ad_update' ad.id %}">
-          <i class="fa fa-pencil"> Edit </i>
-        </a>
-        <a class="text-danger" style="padding-left: 0.5em" href="{% url 'ads:ad_delete' ad.id %}">
-          <i class="fa fa-trash"> Delete </i>
-        </a>
-      </div>
-      {% endif %}
-
-
-    </div>
-    <div class="card-footer">
-      <small class="text-muted">Last updated {{ ad.updated_at|naturaltime }}</small>
-    </div>
-
+    {% if user.is_authenticated %}
+    <a href="{% url 'ads:ad_create' %}" class="btn btn-ads-primary shadow-lg d-none d-md-block">
+        <i class="fas fa-plus-circle mr-2"></i> Create Listing
+    </a>
+    {% endif %}
   </div>
 
+  <div class="glass-card p-2 shadow-sm mb-4" style="border-radius: 100px; background: rgba(255, 255, 255, 0.8);">
+    <form class="form-inline w-100 ads-search-container border-0 m-0">
+      <div class="d-flex align-items-center w-100 px-3">
+        <i class="fas fa-search text-muted mr-3" style="font-size: 1.2rem; opacity: 0.6;"></i>
+        <input class="form-control ads-search-input flex-grow-1 border-0" type="search" placeholder="What are you looking for today?" name="search" {% if search %} value="{{ search }}" {% endif %} />
+        <button class="btn btn-ads-primary rounded-pill px-5" type="submit">Search</button>
+        {% if search %}
+        <a class="btn btn-link text-muted ml-2" href="{% url 'ads:all' %}"><i class="fas fa-times-circle"></i></a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{% if ad_list %}
+<div class="row g-4 reveal-grid content">
+  {% for ad in ad_list %}
+  <div class="col-12 col-md-6 col-lg-4 mb-4">
+    <div class="glass-card ad-card">
+      <div class="position-relative">
+        <div class="ad-card-img-box">
+          {% if ad.content_type %}
+          <img class="ad-card-img" src="{% url 'ads:ad_picture' ad.id %}" />
+          {% else %}
+          <div class="text-muted opacity-25">
+            <i class="fas fa-image fa-3x"></i>
+          </div>
+          {% endif %}
+          
+          <div class="ad-card-price-badge">
+            ${{ ad.price|floatformat:2 }}
+          </div>
+        </div>
+        
+        {% if user.is_authenticated %}
+        <div class="position-absolute" style="top: 15px; right: 15px; z-index: 10;">
+          <a href="javascript:void(0)" 
+            data-url="{% url 'ads:ad_unfavorite' ad.id %}" 
+            data-id="{{ ad.id }}"
+            class="fav-btn glass-card p-2 align-items-center justify-content-center {% if ad.id not in favorites %}d-none{% endif %}" 
+            id="favorite_star_{{ad.id}}">
+            <i class="fas fa-star text-warning"></i>
+          </a>
+          <a href="javascript:void(0)" 
+            data-url="{% url 'ads:ad_favorite' ad.id %}" 
+            data-id="{{ ad.id }}"
+            class="fav-btn glass-card p-2 align-items-center justify-content-center {% if ad.id in favorites %}d-none{% endif %}" 
+            id="unfavorite_star_{{ad.id}}">
+            <i class="far fa-star text-muted"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <a href="{% url 'ads:ad_detail' ad.id %}" class="text-dark text-decoration-none">
+            <h5 class="card-title font-weight-bold mb-0" style="font-size: 1.15rem;">{{ ad.title }}</h5>
+          </a>
+        </div>
+        
+        <p class="card-text text-muted small mb-3" style="line-height: 1.6;">{{ ad.text | truncatewords:"12" }}</p>
+        
+        <div class="d-flex justify-content-between align-items-center mt-auto">
+          <div class="d-flex align-items-center">
+            <img class="rounded-circle mr-2" style="width: 24px; height: 24px;" src="{{ ad.owner|gravatar:48 }}" />
+            <small class="text-muted font-weight-bold">{{ ad.owner.username }}</small>
+          </div>
+          <small class="text-muted"><i class="far fa-clock mr-1"></i>{{ ad.updated_at|naturaltime }}</small>
+        </div>
+
+        {% if ad.owner == user %}
+        <div class="mt-3 pt-3 border-top d-flex">
+          <a class="btn btn-sm btn-outline-primary rounded-pill px-3 mr-2" href="{% url 'ads:ad_update' ad.id %}">
+            <i class="fas fa-edit mr-1"></i>
+          </a>
+          <a class="btn btn-sm btn-outline-danger rounded-pill px-3" href="{% url 'ads:ad_delete' ad.id %}">
+            <i class="fas fa-trash-alt mr-1"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
   {% endfor %}
 </div>
 
-<div class="clearfix">
-  <hr />
-  {% else %}
-  <p>There are no ads in the database.</p>
-  {% endif %}
-
-  <p>
-    <a href="{% url 'ads:ad_create' %}">Add an Ad</a> |
-    {% if user.is_authenticated %}
-      <a href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a>
-    {% else %}
-      <a href="{% url 'login' %}?next={% url 'ads:all' %}">Login</a>
-    {% endif %}
+{% else %}
+<div class="col-12 text-center py-5 glass-card content">
+  <i class="fas fa-{% if is_favorites_page %}heart{% else %}search{% endif %} fa-4x text-muted opacity-25 mb-4"></i>
+  <h3 class="text-muted font-weight-bold">
+    {% if is_favorites_page %}No saved ads yet{% else %}No ads found{% endif %}
+  </h3>
+  <p class="text-muted">
+    {% if is_favorites_page %}Start browsing the marketplace and save your favorites to see them here!{% else %}Try adjusting your search or be the first to post something!{% endif %}
   </p>
+  <a href="{% url 'ads:all' %}" class="btn btn-ads-primary rounded-pill px-5 py-3 mt-3">
+    {% if is_favorites_page %}Discover Ads{% else %}Create Ad{% endif %}
+  </a>
 </div>
+{% endif %}
 
+{% endblock %}
+
+{% block script %}
 <script>
-  function favPost(url, ad_id) {
-    console.log("Requesting JSON");
-    $.post(url, {}, function (rowz) {
-      console.log(url, "finished");
-      $("#unfavorite_star_" + ad_id).toggle();
-      $("#favorite_star_" + ad_id).toggle();
-    }).fail(function (xhr) {
-      alert("Url failed with " + xhr.status + " " + url);
+  $(document).ready(function() {
+    $(".fav-btn").click(function() {
+      const btn = $(this);
+      const url = btn.data("url");
+      const ad_id = btn.data("id");
+      
+      console.log("Requesting JSON for ad:", ad_id);
+      
+      $.post(url, {}, function(rowz) {
+        $("#unfavorite_star_" + ad_id).toggleClass("d-none");
+        $("#favorite_star_" + ad_id).toggleClass("d-none");
+      }).fail(function(xhr) {
+        alert("Url failed with " + xhr.status + " " + url);
+      });
     });
-  }
+  });
 </script>
-
 {% endblock %}

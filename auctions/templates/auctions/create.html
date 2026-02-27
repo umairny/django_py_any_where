@@ -1,18 +1,75 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
-{% block content %}
+{% block auctions_content %}
+<div class="glass-card max-width-700 mx-auto p-5 shadow-lg">
+    <div class="text-center mb-5">
+        <h1 class="font-weight-bold auth-title mb-2">Create Listing</h1>
+        <p class="text-muted leading-relaxed">Fill in the details to list your item for auction</p>
+    </div>
 
-    <h4 class="diplay-4" >Create New.</h4>
-    <hr />
     {% if message %}
-        <div>{{ message }}</div>
+    <div class="alert alert-warning border-0 rounded-xl mb-4 text-center py-3">
+        <i class="fas fa-exclamation-triangle mr-2"></i> {{ message }}
+    </div>
     {% endif %}
 
     <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-            {% csrf_token %} 
-            {{ form.as_p }}
+        {% csrf_token %}
+        <div class="auth-form-container">
+            {% for field in form %}
+            <div class="auth-input-group mb-4">
+                <label class="small font-weight-bold text-uppercase tracking-wider text-muted mb-2 d-block"
+                    for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {% if field.field.widget.input_type == 'file' %}
+                <div class="custom-file mb-3">
+                    <input type="file" class="custom-file-input auth-input" id="{{ field.id_for_label }}"
+                        name="{{ field.html_name }}">
+                    <label class="custom-file-label auth-input" for="{{ field.id_for_label }}">Choose file</label>
+                </div>
+                {% elif field.field.widget.input_type == 'select' %}
+                <select class="form-control auth-input text-dark" id="{{ field.id_for_label }}"
+                    name="{{ field.html_name }}">
+                    {% for choice_val, choice_label in field.field.choices %}
+                    <option value="{{ choice_val }}">{{ choice_label }}</option>
+                    {% endfor %}
+                </select>
+                {% elif field.name == 'details' %}
+                <textarea class="form-control auth-input text-dark" id="{{ field.id_for_label }}"
+                    name="{{ field.html_name }}" rows="5" placeholder="Describe your item..."></textarea>
+                {% else %}
+                <input type="{{ field.field.widget.input_type }}" 
+                class="form-control auth-input text-dark"
+                    id="{{ field.id_for_label }}" 
+                    name="{{ field.html_name }}" 
+                    placeholder="Enter {{ field.label }}"
+                     {% if field.field.required %}required{% endif %}>
+                {% endif %}
+
+                {% if field.errors %}
+                <div class="text-danger small mt-1">
+                    {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
         </div>
-        <input class="btn btn-primary" type="submit" value="Create listing">
+
+        <button class="btn auction-btn-primary btn-block py-3 mt-4 font-weight-bold shadow-lg" type="submit">
+            <i class="fas fa-plus-circle mr-2"></i> Publish Listing
+        </button>
     </form>
+</div>
+
+<script>
+    // Update filename in custom file input
+    document.querySelector('.custom-file-input').addEventListener('change', function (e) {
+        var fileName = document.getElementById(this.id).files[0].name;
+        var nextSibling = e.target.nextElementSibling
+        nextSibling.innerText = fileName
+    })
+</script>
 {% endblock %}

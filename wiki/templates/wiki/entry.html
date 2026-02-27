@@ -1,16 +1,45 @@
 {% extends "wiki/layout.html" %}
 
-{% block content %}
-<div class="main-content">
-    <h3>Page name: <span style="color:red">{{title}}</span> </h3>
-    <hr />
-    <div class="m-5">
-        <div class="p-2">
-        {{ page|safe }}
+{% block title %}{{ title }} - Wiki{% endblock %}
+
+{% block wiki_content %}
+<div class="glass-card wiki-card reveal">
+    <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-        <br />
-        <hr />
-        <a class="btn btn-info" href="edit/{{title}}">Edit Page</a>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-2">
+                    <li class="breadcrumb-item"><a href="{% url 'wiki:index' %}" class="text-muted">Wiki</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
+                </ol>
+            </nav>
+            <h1 class="display-4 font-weight-bold mb-0">{{ title }}</h1>
+        </div>
+        <a href="{% url 'wiki:edit' title %}" class="btn-wiki btn-wiki-outline">
+            <i class="fas fa-edit"></i> Edit Page
+        </a>
+    </div>
+
+    <hr class="my-4 opacity-50">
+
+    <div class="wiki-entry-content">
+        {{ page|safe }}
+    </div>
+
+    <div class="mt-5 pt-4 border-top opacity-50 d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+            <i class="fas fa-info-circle mr-1"></i> Markdown rendering enabled
+        </small>
+        <a href="{% url 'wiki:index' %}" class="text-primary font-weight-bold text-decoration-none">
+            <i class="fas fa-arrow-left mr-1"></i> Back to Explore
+        </a>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            document.querySelector('.reveal').classList.add('reveal-active');
+        }, 100);
+    });
+</script>
 {% endblock %}

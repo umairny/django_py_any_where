@@ -1,8 +1,213 @@
-textarea {
-    min-height: 400px;
+/* Mail App - Modern Glassmorphic Design System */
+
+:root {
+    --mail-primary: #3b82f6;
+    --mail-primary-dark: #1d4ed8;
+    --mail-primary-light: rgba(59, 130, 246, 0.1);
+    --mail-secondary: #8b5cf6;
+    --mail-bg: #f8fafc;
+    --mail-card-bg: rgba(255, 255, 255, 0.8);
+    --mail-glass-border: rgba(255, 255, 255, 0.5);
+    --mail-text-main: #0f172a;
+    --mail-text-muted: #64748b;
+    --mail-sidebar-bg: #ffffff;
+    --mail-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --mail-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --radius-lg: 1rem;
+    --radius-pill: 50px;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.email {
-    padding: 0;
-    margin: 0;
+body {
+    background-color: var(--mail-bg);
+    color: var(--mail-text-main);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+    background: var(--mail-card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--mail-glass-border);
+    box-shadow: var(--mail-shadow);
+    border-radius: var(--radius-lg);
+}
+
+/* Navbar/Sidebar Upgrades */
+.mail-nav-container {
+    background: white;
+    padding: 1rem;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--mail-shadow);
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 2rem auto;
+    width: fit-content;
+    border: 1px solid #e2e8f0;
+}
+
+.mail-nav-btn {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    color: var(--mail-text-muted);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none !important;
+}
+
+.mail-nav-btn:hover {
+    background: var(--mail-primary-light);
+    color: var(--mail-primary);
+}
+
+.mail-nav-btn.active {
+    background: var(--mail-primary);
+    color: white !important;
+}
+
+/* Mailbox Items */
+.email-item {
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.75rem;
+    background: white;
+    border: 1px solid #f1f5f9;
+    transition: var(--transition);
+    display: grid;
+    grid-template-columns: 200px 1fr 180px;
+    align-items: center;
+    gap: 1.5rem;
+    cursor: pointer;
+}
+
+.email-item:hover {
+    border-color: var(--mail-primary);
+    box-shadow: var(--mail-shadow-lg);
+    transform: translateY(-1px);
+}
+
+.email-item.unread {
+    background: #f0f7ff;
+    border-left: 4px solid var(--mail-primary);
+}
+
+.email-item.unread .subject {
+    font-weight: 700;
+}
+
+.email-item .sender {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.email-item .subject {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.email-item .timestamp {
+    font-size: 0.85rem;
+    color: var(--mail-text-muted);
+    text-align: right;
+}
+
+/* Email Viewing */
+.email-view-header {
+    margin-bottom: 2rem;
+}
+
+.email-meta {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.email-body {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    min-height: 400px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* Compose View */
+.compose-card {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.form-field {
+    margin-bottom: 1.5rem;
+}
+
+.form-field label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: var(--mail-text-muted);
+}
+
+.mail-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #cbd5e1;
+    background: white;
+    transition: var(--transition);
+}
+
+.mail-input:focus {
+    outline: none;
+    border-color: var(--mail-primary);
+    box-shadow: 0 0 0 4px var(--mail-primary-light);
+}
+
+.mail-textarea {
+    min-height: 300px;
+    resize: vertical;
+}
+
+.btn-mail-primary {
+    background: var(--mail-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.btn-mail-primary:hover {
+    background: var(--mail-primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Utility */
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

@@ -1,14 +1,52 @@
 {% extends "wiki/layout.html" %}
 
+{% block wiki_content %}
+<div class="glass-card wiki-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Wiki Encyclopedia</h2>
+            <p class="text-muted">Explore and contribute to our knowledge base</p>
+        </div>
+        <div class="entry-count-badge p-3 glass-card text-center" style="min-width: 100px;">
+            <span class="d-block font-weight-bold h4 mb-0" style="color: var(--wiki-primary);">
+                {{ entries|length }}</span>
+            <small class="text-uppercase tracking-wider">Entries</small>
+        </div>
+    </div>
 
-{% block content %}
-<div class="main-content">
-    <h3 class="mb-3">All Pages</h3>
-    <hr />
-    <ul class="list-group">
+    <div class="search-results-info mb-4" id="results-count" style="display: none;">
+        <span class="badge badge-pill badge-primary px-3 py-2">Search Results</span>
+    </div>
+
+    <div class="row">
         {% for entry in entries %}
-            <li class="list-group-item mb-1 col-md-5 col-xs-12"><a href="wiki/{{entry}}"> {{ entry }} </a></li>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <a href="{% url 'wiki:entry' entry %}" class="wiki-list-item">
+                {{ entry }}
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-search-minus fa-3x text-muted mb-3"></i>
+            <h4>No entries found</h4>
+            <p class="text-muted">Try a different search term or create a new page.</p>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Simple reveal animation
+        setTimeout(() => {
+            document.querySelector('.reveal').classList.add('reveal-active');
+        }, 100);
+
+        // Check if we are showing search results
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('q')) {
+            document.getElementById('results-count').style.display = 'block';
+        }
+    });
+</script>
 {% endblock %}

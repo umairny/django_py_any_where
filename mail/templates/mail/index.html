@@ -1,56 +1,53 @@
-{% extends 'base_template.html' %}
-{% block bg %}class="bg-light"{% endblock %}
-{% block bg-anim%}{%endblock%}
+{% extends 'mail/layout.html' %}
 {% load static %}
 
-{% block head %}
-    <link rel="stylesheet" href="{% static 'mail/styles.css' %}">
+{% block mail_content %}
+<div class="fade-in">
+  {% if not user.is_authenticated %}
+  <div class="glass-panel text-center p-5" style="max-width: 800px; margin: 4rem auto;">
+    <div class="mb-5">
+      <div class="display-1 text-primary mb-4" style="opacity: 0.2;">
+        <i class="fas fa-envelope-open-text"></i>
+      </div>
+      <h1 class="display-4 font-weight-bold">E-mail app.</h1>
+      <p class="lead text-muted">A premium, single-page messaging experience.</p>
+    </div>
+
+    <hr class="my-4 opacity-10">
+
+    <div class="row text-left mb-5">
+      <div class="col-md-4">
+        <div class="p-3">
+          <i class="fas fa-bolt text-primary mb-3 h4"></i>
+          <h6>Fast SPA</h6>
+          <p class="small text-muted">Instant transitions without page reloads.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3">
+          <i class="fas fa-archive text-primary mb-3 h4"></i>
+          <h6>Organize</h6>
+          <p class="small text-muted">Efficiently archive and sort your messages.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3">
+          <i class="fas fa-lock text-primary mb-3 h4"></i>
+          <h6>Secure</h6>
+          <p class="small text-muted">Django-powered authentication & security.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3">
+      <a class="btn-mail-primary px-5 text-decoration-none" href="{% url 'login' %}?next={% url 'mail:index' %}">
+        Get Started <i class="fas fa-arrow-right ml-2"></i>
+      </a>
+    </div>
+  </div>
+  {% else %}
+  <!-- Authenticated users will be handled by inbox.html logic if redirecting from here, 
+       but typically views.py handles this by rendering inbox.html -->
+  {% endif %}
+</div>
 {% endblock %}
-
-{% block title %}Email{% endblock %}
-
-{% block navbar %}
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-    {% if user.is_authenticated %}
-      <a class="navbar-brand" href="#">Hi, {{request.user.username}}</a>
-      <a class="navbar-brand" href="#"><small>email: {{request.user.email}}</small></a>
-    {% else %}
-      <a class="navbar-brand" href="#">E-mail App</a>
-    {% endif %}
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="{% url 'mail:index' %}">Home</a>
-      </li>
-      {% if user.is_authenticated %}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout' %}?next={% url 'mail:index' %}">Logout</a>
-        </li>
-      {% else %}
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}?next={% url 'mail:index' %}">Login</a>
-        </li>
-      {% endif %}
-    </ul>
-  </div>
-</nav>
-{% endblock  %}
-
-{% block content %}
-  <div>
-    {% if not user.is_authenticated %}
-    <h1 class="display-4">E-mail app.</h1>
-    <p class="lead">Single page app using django JSON API and JS.</p>
-    <hr class="my-2">
-    <p>In this app you can send, receive and achieve emails. Also you can reply the emails.</p>
-    <p class="lead">
-      <a class="nav-link" href="{% url 'login' %}?next={% url 'mail:index' %}">Login</a>
-    </p>
-    {% endif %}
-  </div>
-{% endblock  %}

@@ -4,31 +4,53 @@
 {% block content %}
 <div class="content">
     {% if user.is_authenticated %}
-    <form method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-                {{ form.as_p }}
+    <div class="post-form-container reveal">
+        <div class="glass-card post-form-card">
+            <div class="post-form-header">
+                <div class="avatar-placeholder">
+                    {{ user.username|first|upper }}
+                </div>
+                <div>
+                    <h6 class="mb-0 font-weight-bold">{{ user.username }}</h6>
+                    <p class="text-muted small mb-0">Share your thoughts</p>
+                </div>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-group mb-3">
+                    <textarea class="form-control border-0 bg-light-soft" name="post" id="id_post" rows="3"
+                        placeholder="What's on your mind?"></textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary px-4 py-2 rounded-pill font-weight-bold shadow-sm" type="submit">
+                        <i class="fas fa-paper-plane mr-2"></i> Post
+                    </button>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <input class="btn btn-primary" type="submit" value="Post">           
-        </div>
+    </div>
 
-    </form>
+    <div class="feed-header mb-4 d-flex align-items-center">
+        <h5 class="font-weight-bold mb-0 mr-3">Recent Activity</h5>
+        <div class="flex-grow-1 border-bottom opacity-10"></div>
+    </div>
+
     {% include "network/posts.html" %}
 
-   {% else %}
-    <div class="container">
-    <div>
-        <h1 class="display-4">Social Network example.</h1>
-        <p class="lead">In this app you can post, edit post, comment on post and Like the post. Also you can follow the others, see your followers posts and edit your profile.</p>
-        <hr class="my-2">
-        <p><a href="{% url 'login' %}?next={% url 'network:index' %}">Login</a> to continue...</p>
+    {% else %}
+    <div class="container py-5 text-center">
+        <div class="glass-card p-5 reveal">
+            <h1 class="display-4 font-weight-bold mb-4">Network. <span class="text-primary">Connect Better.</span></h1>
+            <p class="lead text-muted mb-5 mx-auto max-width-600">
+                Experience a more refined way to stay connected. Post, follow, and engage with a community that values
+                quality interaction.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'login' %}?next={% url 'network:index' %}"
+                    class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-blue">Get Started</a>
+            </div>
+        </div>
     </div>
-
-    </div>
-
     {% endif %}
     <script src="{% static 'network/main.js' %}"></script>
-
 </div>
 {% endblock %}
-

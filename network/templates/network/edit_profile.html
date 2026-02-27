@@ -2,26 +2,113 @@
 {% load static %}
 
 {% block content %}
-<div class="row">
-<div class="alert alert-warning col-12 mt-2">The change will update your profile.</div>
-<form method="POST" id="upload_form" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input class="btn btn-info" type="submit" value="Save">
-    <input class="btn btn-info" type="submit" value="Cancel" onclick="window.location.href='{% url 'network:profile' user.id %}';return false;">
-</form>
+<div class="edit-profile-container reveal">
+  <div class="glass-card edit-profile-card">
+    <div class="edit-header">
+      <h2>Edit Profile</h2>
+      <p>Update your personal information and profile picture</p>
+    </div>
+
+    <!-- Data attributes to pass Django variables to JS safely -->
+    <form method="POST" id="upload_form" enctype="multipart/form-data" data-max-size="{{ form.max_upload_limit }}"
+      data-max-text="{{ form.max_upload_limit_text }}">
+      {% csrf_token %}
+
+      <!-- Avatar Upload Section -->
+      <div class="avatar-upload-section">
+        <div class="avatar-preview-container">
+          {% if user.profile.id %}
+          <img id="avatar-preview" src="{% url 'network:prof_picture' user.profile.id %}" alt="Profile Picture"
+            onerror="this.src='https://ui-avatars.com/api/?name={{ user.username }}&background=3b82f6&color=fff'">
+          {% else %}
+          <img id="avatar-preview"
+            src="https://ui-avatars.com/api/?name={{ user.username }}&background=3b82f6&color=fff"
+            alt="Profile Picture">
+          {% endif %}
+        </div>
+        <label for="id_picture" class="upload-overlay" title="Change Picture">
+          <i class="fas fa-camera"></i>
+        </label>
+        <input type="file" name="picture" id="id_picture" class="hidden-file-input" accept="image/*">
+      </div>
+
+      <!-- Full Name -->
+      <div class="form-group-custom">
+        <label>Full Name</label>
+        <div class="input-icon-wrapper">
+          <i class="fas fa-user"></i>
+          {{ form.full_name }}
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="form-group-custom">
+        <label>Location</label>
+        <div class="input-icon-wrapper">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ form.location }}
+        </div>
+      </div>
+
+      <!-- Birth Date -->
+      <div class="form-group-custom">
+        <label>Birth Date</label>
+        <div class="input-icon-wrapper">
+          <i class="fas fa-calendar-alt"></i>
+          {{ form.birth_date }}
+        </div>
+      </div>
+
+      {% if form.errors %}
+      <div class="alert alert-danger rounded-lg small mb-4">
+        {% for field in form %}
+        {% for error in field.errors %}
+        <div><strong>{{ field.label }}:</strong> {{ error }}</div>
+        {% endfor %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="edit-profile-actions">
+        <a href="{% url 'network:profile' user.id %}" class="btn-premium btn-cancel">
+          <i class="fas fa-times"></i> Cancel
+        </a>
+        <button type="submit" class="btn-premium btn-save">
+          <i class="fas fa-check"></i> Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
-<!-- https://stackoverflow.com/questions/2472422/django-file-upload-size-limit -->
+
 <script>
-$("#upload_form").submit(function() {
-  console.log('Checking file size');
-  if (window.File && window.FileReader && window.FileList && window.Blob) {
-      var file = $('#id_{{ form.upload_field_name }}')[0].files[0];
-      if (file && file.size > {{ form.max_upload_limit }} ) {
-          alert("File " + file.name + " of type " + file.type + " must be < {{ form.max_upload_limit_text }}");
-      return false;
-    }
-  }
-});
+  $(document).ready(function () {
+    // Image Preview
+    $("#id_picture").on("change", function () {
+      if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          $('#avatar-preview').attr('src', e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+
+    // File Size Validation
+    $("#upload_form").on("submit", function () {
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+        var file = $('#id_picture')[0].files[0];
+        var $form = $(this);
+        var maxSize = $form.data("max-size");
+        var maxText = $form.data("max-text");
+
+        if (file && maxSize && file.size > maxSize) {
+          alert("File " + file.name + " must be smaller than " + maxText);
+          return false;
+        }
+      }
+      return true;
+    });
+  });
 </script>
 {% endblock %}

@@ -1,14 +1,33 @@
 {% extends "network/layout.html" %}
 {% load static %}
 {% block content %}
-<div class="container">
-<h4 class="alert alert-info mt-2">Posts of your followers:</h4>
-    <h5>You have <i class="fa fa-users" aria-hidden="true"></i><strong> {{ follow.count }} follower </strong> <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>  
-    {% for follower in follow %}
-    <span style="color:green;"> <i class="fa fa-user" aria-hidden="true"></i> {{ follower.user }}, </span>
-    {% endfor %}
-    </h5>
+<div class="content">
+    <div class="glass-card p-4 mb-5 reveal">
+        <h4 class="font-weight-bold mb-3 text-primary">
+            <i class="fas fa-users mr-2"></i> Your Network
+        </h4>
+        <p class="text-muted">
+            You are currently following <span class="font-weight-bold text-dark">{{ follow.count }}</span> people:
+        </p>
+        <div class="d-flex flex-wrap gap-2 mt-3">
+            {% for follower in follow %}
+            <a href="{% url 'network:profile' follower.user.id %}"
+                class="badge badge-pill badge-primary-soft p-2 px-3 mr-2 mb-2">
+                <i class="fas fa-user-circle mr-1 opacity-50"></i> {{ follower.user }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="feed-header mb-4 d-flex align-items-center">
+        <h5 class="font-weight-bold mb-0 mr-3">
+            <i class="fas fa-stream mr-2 text-primary opacity-50"></i> Posts from Following
+        </h5>
+        <div class="flex-grow-1 border-bottom opacity-10"></div>
+    </div>
+
     {% include "network/posts.html" %}
 </div>
+<script src="{% static 'network/main.js' %}"></script>
 
 {% endblock %}

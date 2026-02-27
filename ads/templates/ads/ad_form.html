@@ -1,22 +1,96 @@
 {% extends "base_menu.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<p>
-  <form method="post" id="upload_form" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <input class="btn btn-primary" type="submit" value="Submit">
-    <input class="btn btn-warning" type="reset" value="Cancel" onclick="window.location.href='{% url 'ads:all' %}';return false;">
-  </form>
-</p>
+<div class="glass-card max-width-700 mx-auto p-4 p-md-5 shadow-lg my-5">
+    <div class="text-center mb-5">
+        <h1 class="font-weight-bold mb-2">Ad Details</h1>
+        <p class="text-muted">Tell the world about what you're listing</p>
+    </div>
+
+    <form method="post" id="upload_form" enctype="multipart/form-data" 
+        data-max-size="{{ form.max_upload_limit }}" 
+        data-max-text="{{ form.max_upload_limit_text }}"
+        data-field-name="{{ form.upload_field_name }}">
+        {% csrf_token %}
+        <div class="auth-form-container">
+            {% for field in form %}
+            <div class="form-group mb-4">
+                <label class="form-ads-label" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+                {% if field.name == 'picture' %}
+                    <div class="custom-file-ads mb-2">
+                        <input type="file" id="{{ field.id_for_label }}" name="{{ field.html_name }}" onchange="updateFileName(this)">
+                        <div class="custom-file-ads-label" id="file-label-text">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Click or drag photo here</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="position-relative">
+                        {% if field.name == 'title' %}
+                            <i class="fas fa-heading position-absolute text-muted" style="left: 15px; top: 18px; opacity: 0.5;"></i>
+                            <div class="input-with-icon-left">
+                                {{ field }}
+                            </div>
+                        {% elif field.name == 'price' %}
+                            <i class="fas fa-tag position-absolute text-muted" style="left: 15px; top: 18px; opacity: 0.5;"></i>
+                            <div class="input-with-icon-left">
+                                {{ field }}
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+                
+                {% if field.errors %}
+                <div class="text-danger small mt-2 ml-1">
+                    <i class="fas fa-exclamation-circle mr-1"></i> {{ field.errors|striptags }}
+                </div>
+                {% endif %}
+                
+                {% if field.help_text %}
+                <small class="form-text text-muted mt-2 ml-1" style="opacity: 0.7;">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+
+        
+        <div class="d-flex flex-column flex-md-row justify-content-center mt-5">
+            <button class="btn btn-ads-primary px-5 py-3 font-weight-bold mb-3 mb-md-0 mr-md-3" type="submit">
+                <i class="fas fa-check-circle mr-2"></i> Submit Ad
+            </button>
+            <a href="{% url 'ads:all' %}" class="btn btn-outline-secondary rounded-pill px-5 py-3 font-weight-bold">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+function updateFileName(input) {
+    const label = document.getElementById('file-label-text');
+    if (input.files && input.files[0]) {
+        label.innerHTML = `<i class="fas fa-file-image text-success"></i> <span>\${input.files[0].name}</span>`;
+    }
+}
+</script>
+
 <!-- https://stackoverflow.com/questions/2472422/django-file-upload-size-limit -->
 <script>
 $("#upload_form").submit(function() {
-  console.log('Checking file size');
+  const form = $(this);
+  const maxSize = form.data("max-size");
+  const maxText = form.data("max-text");
+  const fieldName = form.data("field-name");
+
   if (window.File && window.FileReader && window.FileList && window.Blob) {
-      var file = $('#id_{{ form.upload_field_name }}')[0].files[0];
-      if (file && file.size > {{ form.max_upload_limit }} ) {
-          alert("File " + file.name + " of type " + file.type + " must be < {{ form.max_upload_limit_text }}");
+      var file = $('#id_' + fieldName)[0].files[0];
+      if (file && file.size > maxSize ) {
+          alert("File " + file.name + " of type " + file.type + " must be < " + maxText);
       return false;
     }
   }

@@ -1,16 +1,50 @@
 {% extends "wiki/layout.html" %}
 
-{% block content %}
-<div class="main-content">
-    <h3>Page name: <span style="color:red">{{title}}</span> </h3>
-    <hr />
-    <div class="m-5">
-        <div class="p-2">
-        {{ page|safe }}
+{% block title %}Random: {{ title }} - Wiki{% endblock %}
+
+{% block wiki_content %}
+<div class="glass-card wiki-card reveal">
+    <div class="d-flex justify-content-between align-items-start mb-4">
         <div>
-        <br />
-        <hr />
-        <a class="btn btn-info" href="wiki/edit/{{title}}">Edit Page</a>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0 mb-2">
+                    <li class="breadcrumb-item"><a href="{% url 'wiki:index' %}" class="text-muted">Wiki</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Random Page</li>
+                </ol>
+            </nav>
+            <h1 class="display-4 font-weight-bold mb-0">{{ title }}</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'wiki:random' %}" class="btn-wiki btn-wiki-outline mr-2">
+                <i class="fas fa-dice"></i> Another Random
+            </a>
+            <a href="{% url 'wiki:edit' title %}" class="btn-wiki btn-wiki-primary">
+                <i class="fas fa-edit"></i> Edit This Page
+            </a>
+        </div>
+    </div>
+
+    <hr class="my-4 opacity-50">
+
+    <div class="wiki-entry-content">
+        {{ page|safe }}
+    </div>
+
+    <div class="mt-5 pt-4 border-top opacity-50 d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+            <i class="fas fa-info-circle mr-1"></i> Found via random exploration
+        </small>
+        <a href="{% url 'wiki:index' %}" class="text-primary font-weight-bold text-decoration-none">
+            <i class="fas fa-arrow-left mr-1"></i> Back to Explore
+        </a>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            document.querySelector('.reveal').classList.add('reveal-active');
+        }, 100);
+    });
+</script>
 {% endblock %}

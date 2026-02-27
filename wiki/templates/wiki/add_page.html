@@ -1,24 +1,61 @@
 {% extends "wiki/layout.html" %}
 
+{% block title %}Create New Page - Wiki{% endblock %}
 
-{% block content %}
-<div class="main-content">
-  <form method="post">
+{% block wiki_content %}
+<div class="glass-card wiki-card reveal">
+  <div class="mb-4">
+    <h2 class="mb-1">Create New Page</h2>
+    <p class="text-muted">Share your knowledge with the world using Markdown.</p>
+  </div>
+
+  <form method="post" id="wiki-form">
     {% csrf_token %}
-      <h3>Create new page:</h3>
-      <hr />
 
-    <div class="form-group row">
-        <lable class="col-sm-1 col-form-label">Title:</lable>
-          <div class="col-sm-6">
-            <input class="form-control" type="text" name="title" placeholder="Enter title of page">
-          </div> 
-    </div>     
-      <h5 class="pb-2">Content: </h5>
-      <textarea name="content"></textarea>
-      <hr />  
-      <br>
-        <input class="save btn btn-info" type="submit" value="Save"/>
+    <div class="wiki-form-group">
+      <label for="title-input">Page Title</label>
+      <input class="wiki-input" type="text" name="title" id="title-input"
+        placeholder="e.g. Python, Space Exploration, Architecture..." required autofocus>
+      <small class="form-text text-muted mt-2">
+        Use a descriptive and unique title for your entry.
+      </small>
+    </div>
+
+    <div class="wiki-form-group">
+      <label for="content-textarea">Content (Markdown)</label>
+      <textarea name="content" id="content-textarea" class="wiki-textarea"
+        placeholder="# Your Heading&#10;&#10;Write your content here..."></textarea>
+      <div class="mt-2 d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+          <i class="fab fa-markdown mr-1"></i> Supports Markdown syntax
+        </small>
+        <div id="char-count" class="small text-muted">0 characters</div>
+      </div>
+    </div>
+
+    <div class="mt-5 pt-4 border-top opacity-50 d-flex justify-content-end gap-3">
+      <a href="{% url 'wiki:index' %}" class="btn-wiki btn-wiki-outline mr-3">
+        Cancel
+      </a>
+      <button type="submit" class="btn-wiki btn-wiki-primary">
+        <i class="fas fa-save mr-1"></i> Save Page
+      </button>
+    </div>
   </form>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => {
+      document.querySelector('.reveal').classList.add('reveal-active');
+    }, 100);
+
+    const textarea = document.getElementById('content-textarea');
+    const charCount = document.getElementById('char-count');
+
+    textarea.addEventListener('input', function () {
+      charCount.textContent = this.value.length + ' characters';
+    });
+  });
+</script>
 {% endblock %}

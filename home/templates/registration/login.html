@@ -1,36 +1,200 @@
 {% extends "base_template.html" %}
-{% block bg %}class="bg-light"{% endblock %}
-{% block bg-anim%}{%endblock%}
+{% block bg %}class="auth-bg"{% endblock %}
+
+{% block head %}
+<style>
+    .auth-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        padding: 3rem;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        color: white;
+        animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-title {
+        font-weight: 800;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -1px;
+        background: linear-gradient(to bottom, #ffffff, #e2e8f0);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .auth-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 2.5rem;
+    }
+
+    .auth-input-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-input-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .auth-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        color: white;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .auth-input:focus {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+    }
+
+    .auth-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .auth-btn {
+        width: 100%;
+        background: white;
+        color: #764ba2;
+        border: none;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.2);
+        background: #f8fafc;
+    }
+
+    .auth-footer {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .auth-footer a {
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .test-credentials {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        margin-top: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .error-msg {
+        background: rgba(239, 68, 68, 0.2);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        padding: 0.75rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-
-    <div class="container">
-    <div>
-        <h1 class="display-5">Login</h1>
-        <hr class="my-2">
-        <p>Login to continue...  </p>
-        <h6 style="text-align:center;" >user: mike, pw: 3256nike, email: mike@t.com | user: emma, pw: 1254emma, email: emma@w.com | user: harry, pw: 9856harr, email: harry@p.com</h6>
+<div class="auth-card">
+    <div class="text-center">
+        <div class="mb-3 d-inline-block px-3 py-1 rounded-pill"
+            style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+            <small class="font-weight-bold text-uppercase tracking-wider">Access Required</small>
+        </div>
+        <h1 class="auth-title">Welcome Back.</h1>
+        <p class="auth-subtitle">Login to unlock the full features of our platform.</p>
     </div>
 
-    <div class="mac">
-            <form action="{% url 'login' %}" method="post">
-            {% csrf_token %}
-
-                {% for field in form %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}" >{{ field.html_name.upper }}</label>
-                        <input class="form-control mt-1" id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{ field.html_name }}" placeholder="{{ field.html_name }}" required /> 
-                        {{ field.errors }}
-                    </div>
-                {% endfor %}
-
-            <input class="btn btn-primary" type="submit" value="Login">
-            <input type="hidden" name="next" value="{{ next }}" />
-
-            {% if form.errors %}
-                <small style="color:red;">Please enter a correct username and/or password.</small>
-            {% endif %}
-
-        </form>
+    {% if form.errors %}
+    <div class="error-msg">
+        Invalid username or password. Please try again.
     </div>
+    {% endif %}
+
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" />
+
+        <div class="auth-input-group">
+            <label for="id_username">Username</label>
+            <input type="text" name="username" id="id_username" class="auth-input" placeholder="Enter your username"
+                autofocus required>
+        </div>
+
+        <div class="auth-input-group">
+            <label for="id_password">Password</label>
+            <input type="password" name="password" id="id_password" class="auth-input" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="auth-btn">
+            Log In <i class="fas fa-arrow-right ml-2 opacity-50 h6 mb-0"></i>
+        </button>
+    </form>
+
+
+
+    <div class="test-credentials text-center">
+        <strong>Demo Accounts</strong><br>
+        <br>
+        user: mike <br> password: 3256nike <br> email: mike@t.com <br>
+        <br>
+        user: emma <br> password: 1254emma <br> email: emma@w.com <br>
+        <br>
+        user: harry <br> password: 9856harr <br> email: harry@p.com <br>
+        <br>
     </div>
+</div>
 {% endblock %}

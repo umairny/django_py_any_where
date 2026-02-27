@@ -93,20 +93,22 @@ def following(request):
     )
 
 
-# To complete the user its profile if user want
 @login_required
 @csrf_exempt
 def edit_profile(request, user_id):
-    success_url = reverse_lazy("network:profile", kwargs={"user_id": user_id})
+    # Security check: Ensure user is editing their own profile
+    if request.user.id != user_id:
+        return redirect("network:edit_profile", user_id=request.user.id)
+
+    success_url = reverse_lazy("network:profile", kwargs={"user_id": request.user.id})
+    profile = get_object_or_404(Profile, user=request.user)
 
     if request.method == "GET":
-        profile = get_object_or_404(Profile, user=request.user)
         form = ProfileForm(instance=profile)
         ctx = {"form": form}
         return render(request, "network/edit_profile.html", ctx)
 
     if request.method == "POST":
-        profile = get_object_or_404(Profile, user=request.user)
         form = ProfileForm(request.POST, request.FILES or None, instance=profile)
 
         if not form.is_valid():

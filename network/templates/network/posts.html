@@ -1,91 +1,110 @@
 {% load static %}
+{% load humanize %}
 
 <div>
-    <div id="list_post">
+    <div id="list_post" class="posts-feed">
         {% for post in page_obj %}
-        <div class="card m-3">
-            <h5 class="card-header"> <a href="{% url 'network:profile' post.user.id %}">{{ post.user }}</a></h5>
+        <div class="glass-card post-card mb-4 reveal">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                <a href="{% url 'network:profile' post.user.id %}" class="text-decoration-none">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-small mr-2">{{ post.user.username|first|upper }}</div>
+                        <span class="font-weight-bold text-dark">{{ post.user }}</span>
+                    </div>
+                </a>
+                <span class="text-muted small">{{ post.pub_date|naturaltime }}</span>
+            </div>
+
             <div class="card-body">
-                <h5 id="post-{{post.id}}" class="card-title">{{post.post}}</h5>
+                <div id="post-content-container-{{post.id}}">
+                    <p id="post-{{post.id}}" class="post-text mb-3">{{post.post}}</p>
 
-                    <p id="reply-{{post.id}}" class="card-subtitle" 
                     {% if post.reply %}
-                    style="color:gray; display: block;"
+                    <div id="reply-container-{{post.id}}"
+                        class="reply-box p-3 rounded-lg bg-light-soft border-left-primary mb-3">
+                        <p class="text-muted small mb-1"><i class="fas fa-comment-dots mr-2"></i>Comment</p>
+                        <p id="reply-{{post.id}}" class="mb-0 text-dark">{{post.reply}}</p>
+                    </div>
                     {% else %}
-                    style="color:gray; display: none;"
+                    <div id="reply-container-{{post.id}}" style="display: none;"
+                        class="reply-box p-3 rounded-lg bg-light-soft border-left-primary mb-3">
+                        <p class="text-muted small mb-1"><i class="fas fa-comment-dots mr-2"></i>Comment</p>
+                        <p id="reply-{{post.id}}" class="mb-0 text-dark"></p>
+                    </div>
                     {% endif %}
-                    >
-                    comments: {{post.reply}}</p>
-
-                <textarea class="form-control" name="edit" id="edit-text-{{ post.id }}" rows="2"
-                    style="display: none;">{{post.post}}</textarea>
-
-
-                <textarea class="form-control" name="comment" id="comment-{{ post.id }}" rows="1"
-                    style="display: none;"></textarea>
-
-
-                <div class="my-2" style="display: block;">
-                    <button id="like{{post.id}}" onclick="like('{{post.id}}')" class="btn btn-light">
-                        {% if request.user in post.like.all %}
-                           <span id="liked{{ post.id }}">Liked</span>
-                        {% else %}
-                            <span id="liked{{ post.id }}">Like</span>
-                        {% endif %}
-                    </button>
-                    <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
-                    <span id="total_like{{ post.id }}">{{post.total_likes}}</span>
-                   
-
-                    {% if user == post.user %}
-                    <button id="edit-btn-{{ post.id }}" onclick="edit('{{ post.id }}')" class="btn btn-light">Edit</button>
-                    <button id="save{{post.id}}" class="btn btn-light" style="display: none;">Save Edit</button>
-                    {% endif %}
-
-                    {% if not post.reply %}
-                        <button id="combtn{{post.id}}" onclick="comm('{{ post.id }}')" class="btn btn-light ml-5">Comment</button>
-                        <button id="reply{{post.id}}" class="btn btn-light" style="display: none;">Reply Comment</button>
-                    {% endif %}
-
-                    <p style="float:right;">Posted: <small>{{post.pub_date}}</small></p>
                 </div>
 
+                <!-- Hidden Editors -->
+                <div class="edit-mode-container" style="display: none;" id="editor-{{ post.id }}">
+                    <textarea class="form-control mb-2" id="edit-text-{{ post.id }}">{{post.post}}</textarea>
+                    <div class="text-right">
+                        <button class="btn btn-sm btn-light mr-2 rounded-pill"
+                            onclick="cancelEdit('{{ post.id }}')">Cancel</button>
+                        <button id="save{{post.id}}" class="btn btn-sm btn-primary rounded-pill px-3">Save
+                            Changes</button>
+                    </div>
+                </div>
 
+                <div class="comment-mode-container" style="display: none;" id="comment-editor-{{ post.id }}">
+                    <textarea class="form-control mb-2" id="comment-{{ post.id }}"
+                        placeholder="Write a comment..."></textarea>
+                    <div class="text-right">
+                        <button class="btn btn-sm btn-light mr-2 rounded-pill"
+                            onclick="cancelComment('{{ post.id }}')">Cancel</button>
+                        <button id="reply{{post.id}}" class="btn btn-sm btn-primary rounded-pill px-3">Reply</button>
+                    </div>
+                </div>
+
+                <div class="post-actions mt-3">
+                    <button id="like{{post.id}}" onclick="like('{{post.id}}')"
+                        class="action-btn {% if request.user in post.like.all %}liked{% endif %}">
+                        <i class="fas fa-heart"></i>
+                        <span id="liked{{ post.id }}">
+                            {% if request.user in post.like.all %}Liked{% else %}Like{% endif %}
+                        </span>
+                        <span class="badge badge-pill ml-1" id="total_like{{ post.id }}">{{post.total_likes}}</span>
+                    </button>
+
+                    {% if not post.reply %}
+                    <button id="combtn{{post.id}}" onclick="comm('{{ post.id }}')" class="action-btn">
+                        <i class="fas fa-comment"></i> Comment
+                    </button>
+                    {% endif %}
+
+                    {% if user == post.user %}
+                    <button id="edit-btn-{{ post.id }}" onclick="edit('{{ post.id }}')" class="action-btn ml-auto">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    {% endif %}
+                </div>
             </div>
         </div>
-
         {% endfor %}
     </div>
-    <hr />
-    <p>Pages: </p>
-    <nav aria-label="Page navigation example">
 
-        <ul class="pagination">
+    <!-- Modern Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1">&laquo; first</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                <a class="page-link rounded-pill mr-2 shadow-sm" href="?page={{ page_obj.previous_page_number }}"><i
+                        class="fas fa-chevron-left"></i></a>
             </li>
             {% endif %}
 
-            {% for page in page_obj.paginator.page_range %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+            <li class="page-item active">
+                <span class="page-link rounded-pill mx-1 shadow-sm">{{ page_obj.number }} of {{
+                    page_obj.paginator.num_pages }}</span>
             </li>
-            {% endfor %}
 
             {% if page_obj.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                <a class="page-link rounded-pill ml-2 shadow-sm" href="?page={{ page_obj.next_page_number }}"><i
+                        class="fas fa-chevron-right"></i></a>
             </li>
             {% endif %}
         </ul>
     </nav>
-    <script src="{% static 'network/main.js' %}"></script>
-
+    {% endif %}
 </div>

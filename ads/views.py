@@ -53,7 +53,18 @@ class AdDetailView(OwnerDetailView):
         ad = Ad.objects.get(id=pk)
         comments = Comment.objects.filter(ad=ad).order_by("-updated_at")
         comment_form = CommentForm()
-        context = {"ad": ad, "comments": comments, "comment_form": comment_form}
+        
+        favorites = list()
+        if request.user.is_authenticated:
+            rows = request.user.favorite_ads.values("id")
+            favorites = [row["id"] for row in rows]
+            
+        context = {
+            "ad": ad, 
+            "comments": comments, 
+            "comment_form": comment_form,
+            "favorites": favorites
+        }
         return render(request, self.template_name, context)
 
 
@@ -170,3 +181,21 @@ class DeleteFavoriteView(LoginRequiredMixin, View):
             pass
 
         return HttpResponse()
+
+
+class FavoriteListView(LoginRequiredMixin, View):
+    template_name = "ads/ad_list.html"
+
+    def get(self, request):
+        ad_list = request.user.favorite_ads.all().order_by("-updated_at")
+        
+        # favorite status for the icons
+        rows = request.user.favorite_ads.values("id")
+        favorites = [row["id"] for row in rows]
+        
+        ctx = {
+            "ad_list": ad_list, 
+            "favorites": favorites, 
+            "is_favorites_page": True
+        }
+        return render(request, self.template_name, ctx)

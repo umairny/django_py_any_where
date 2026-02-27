@@ -1,108 +1,134 @@
-// Comment the user's post the current post
+// Comment the user's post
 function comm(id) {
-        const replyed = document.querySelector('#reply-' + id)
-        const comment = document.querySelector('#comment-' + id)
-        const reply = document.querySelector('#reply' + id)
-        const combtn = document.querySelector('#combtn' + id)
-        
-        combtn.style.display = 'none';
-        comment.style.display = 'block';
-        reply.style.display = 'inline-block';
+    const editor = document.querySelector('#comment-editor-' + id);
+    const commentInput = document.querySelector('#comment-' + id);
+    const replyBtn = document.querySelector('#reply' + id);
+    const comBtn = document.querySelector('#combtn' + id);
+    const replyContainer = document.querySelector('#reply-container-' + id);
+    const replyText = document.querySelector('#reply-' + id);
 
-        reply.addEventListener('click', () => {
-            fetch('comment/' + id, {
+    if (editor) editor.style.display = 'block';
+    if (comBtn) comBtn.style.display = 'none';
+    if (commentInput) commentInput.focus();
+
+    // Remove old listeners to avoid duplicates
+    if (replyBtn) {
+        const newReplyBtn = replyBtn.cloneNode(true);
+        replyBtn.parentNode.replaceChild(newReplyBtn, replyBtn);
+
+        newReplyBtn.addEventListener('click', () => {
+            const val = commentInput.value.trim();
+            if (!val) return;
+
+            fetch('/network/comment/' + id, {
                 method: 'PUT',
-                body: JSON.stringify({
-                    post: comment.value
-                })
-            })
-            comment.style.display = 'none';
-            reply.style.display = 'none';
-            combtn.style.display = 'none';
-
-            replyed.style.display = 'block';
-            replyed.innerHTML  = "comments: " + comment.value;
-        })
-        //lert('comment')
-}
-
-//like and unlike the post
-function like(id) {
-    const likebtn = document.querySelector(`#like${id}`)
-    const total_like = document.querySelector(`#total_like${id}`)
-    const liked = document.querySelector(`#liked${id}`)
-
-    fetch('like/'+id, {
-        method: 'PUT',
-        body: JSON.stringify({liked: "Like", post_id: id})
-        })
-        .then((res) => res.json())
-        .then((res) => {
-            console.log(res)
-            if (res.status == 201) {
-                if (res.liked === "Like") {
-                    total_like.innerHTML = res.total_like;
-                    liked.innerHTML = res.liked;
-                } else if (res.liked === "Liked") {
-                    total_like.innerHTML = res.total_like;
-                    liked.innerHTML = res.liked;
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ post: val })
+            }).then(res => {
+                if (res.ok) {
+                    if (editor) editor.style.display = 'none';
+                    if (replyContainer) replyContainer.style.display = 'block';
+                    if (replyText) replyText.innerHTML = val;
                 }
-                
-            }
-        })
-   
+            }).catch(err => console.error('Error commenting:', err));
+        });
+    }
 }
 
-// follow unfollow users
-function follow(id) {
-    console.log(id);
-    //const likebtn = document.querySelector(`#like${id}`)
-    const total_follow = document.querySelector(`#total_follower`)
-    const followBtn = document.querySelector(`#follow${id}`)
-    //console.log(followBtn);
-    fetch(id+'/follow', {
+function cancelComment(id) {
+    const editor = document.querySelector('#comment-editor-' + id);
+    if (editor) editor.style.display = 'none';
+    const comBtn = document.querySelector('#combtn' + id);
+    if (comBtn) comBtn.style.display = 'inline-flex';
+}
+
+// Like and unlike the post
+function like(id) {
+    const likebtn = document.querySelector(`#like${id}`);
+    const total_like = document.querySelector(`#total_like${id}`);
+    const liked = document.querySelector(`#liked${id}`);
+
+    fetch('/network/like/' + id, {
         method: 'PUT',
-        body: JSON.stringify({follow: "follow", user_id: id})
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ liked: "Like", post_id: id })
+    })
         .then((res) => res.json())
         .then((res) => {
-            console.log(res)
             if (res.status == 201) {
-                total_follow.innerHTML = res.total_follower;
-                followBtn.innerHTML = res.follow;
+                if (total_like) total_like.innerHTML = res.total_like;
+                if (liked) liked.innerHTML = res.liked;
+                if (res.liked === "Liked") {
+                    if (likebtn) likebtn.classList.add('liked');
+                } else {
+                    if (likebtn) likebtn.classList.remove('liked');
+                }
             }
-        })
-   
+        }).catch(err => console.error('Error liking:', err));
 }
 
+// Follow/Unfollow users
+function follow(id) {
+    const total_follow = document.querySelector(`#total_follower`);
+    const followBtn = document.querySelector(`#follow${id}`);
 
-// Edit the current post
+    fetch('/network/profile/' + id + '/follow', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ follow: "follow", user_id: id })
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res.status == 201) {
+                if (total_follow) total_follow.innerHTML = res.total_follower;
+                if (followBtn) followBtn.innerHTML = res.follow;
+            }
+        }).catch(err => console.error('Error following:', err));
+}
+
+// Edit post
 function edit(id) {
-        const post = document.querySelector('#post-' + id)
-        const edit = document.querySelector('#edit-text-' + id)
-        const save = document.querySelector('#save' + id)
-        const editBtn = document.querySelector('#edit-btn-' + id)
+    const content = document.querySelector('#post-content-container-' + id);
+    const editor = document.querySelector('#editor-' + id);
+    const editInput = document.querySelector('#edit-text-' + id);
+    const saveBtn = document.querySelector('#save' + id);
+    const editBtn = document.querySelector('#edit-btn-' + id);
 
-        editBtn.style.display = 'none';
-        post.style.display = 'none';
-        edit.style.display = 'block';
-        save.style.display = 'inline-block';
+    if (content) content.style.display = 'none';
+    if (editor) editor.style.display = 'block';
+    if (editBtn) editBtn.style.display = 'none';
+    if (editInput) editInput.focus();
 
-        save.addEventListener('click', () => {
-            fetch('edit/' + id, {
+    if (saveBtn) {
+        const newSaveBtn = saveBtn.cloneNode(true);
+        saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+        newSaveBtn.addEventListener('click', () => {
+            const val = editInput.value.trim();
+            if (!val) return;
+
+            fetch('/network/edit/' + id, {
                 method: 'PUT',
-                body: JSON.stringify({
-                    post: edit.value
-                })
-            })
-            edit.style.display = 'none';
-            save.style.display = 'none';
-
-            post.style.display = 'block';
-            editBtn.style.display = 'inline-block';
-            post.innerHTML = edit.value;
-        })
-           //alert('hello' + id)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ post: val })
+            }).then(res => {
+                if (res.ok) {
+                    if (content) content.style.display = 'block';
+                    if (editor) editor.style.display = 'none';
+                    if (editBtn) editBtn.style.display = 'inline-flex';
+                    const postElem = document.querySelector('#post-' + id);
+                    if (postElem) postElem.innerHTML = val;
+                }
+            }).catch(err => console.error('Error editing:', err));
+        });
+    }
 }
 
-
+function cancelEdit(id) {
+    const content = document.querySelector('#post-content-container-' + id);
+    if (content) content.style.display = 'block';
+    const editor = document.querySelector('#editor-' + id);
+    if (editor) editor.style.display = 'none';
+    const editBtn = document.querySelector('#edit-btn-' + id);
+    if (editBtn) editBtn.style.display = 'inline-flex';
+}

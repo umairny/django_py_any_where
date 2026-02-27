@@ -1,5 +1,6 @@
 {% extends "base_menu.html" %}
-{% load humanize %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
+{% load humanize %}
+{% load app_tags %} <!-- https://docs.djangoproject.com/en/3.0/ref/contrib/humanize -->
 {% block head %}
 <style>
 .overlay{
@@ -18,55 +19,194 @@
 {% block content %}
 
 {% if ad.content_type %}
-<div id="overlay" class="overlay" style="text-align: center;"
-   onclick="document.getElementById('overlay').style.display = 'none';" >
-    <img style="width:90%;margin-top: 50px; border:3px solid black;" src="{% url 'ads:ad_picture' ad.id %}">
+<div id="overlay" class="overlay d-flex align-items-center justify-content-center p-4" 
+     style="background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); cursor: zoom-out;"
+     onclick="this.style.display = 'none';">
+    <img class="img-fluid ad-detail-img shadow-lg" src="{% url 'ads:ad_picture' ad.id %}" style="max-height: 90vh; border: none; border-radius: 12px;">
 </div>
 {% endif %}
 
-<span style="float: right;">
-({{ ad.updated_at|naturaltime }})
-{% if ad.owner == user %}
-<a href="{% url 'ads:ad_update' ad.id %}"><i class="fa fa-pencil"></i></a>
-<a href="{% url 'ads:ad_delete' ad.id %}"><i class="fa fa-trash"></i></a>
-{% endif %}
-</span>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="glass-card mb-4 overflow-hidden border-0 shadow-lg">
+      {% if ad.content_type %}
+      <div class="bg-dark d-flex align-items-center justify-content-center ad-detail-hero position-relative" 
+           style="min-height: 480px; cursor: zoom-in; background: radial-gradient(circle, #374151 0%, #111827 100%);"
+           onclick="document.getElementById('overlay').style.display = 'flex';">
+          <img class="img-fluid ad-detail-img-main" src="{% url 'ads:ad_picture' ad.id %}" 
+               style="max-height: 500px; object-fit: contain; border-radius: 4px; filter: drop-shadow(0 25px 50px rgba(0,0,0,0.6)); transition: transform 0.3s ease;">
+          <div class="position-absolute" style="bottom: 20px; right: 20px;">
+              <span class="badge badge-light p-2 px-3 rounded-pill shadow-sm">
+                  <i class="fas fa-search-plus mr-1"></i> Click to enlarge
+              </span>
+          </div>
+      </div>
+      {% else %}
+      <div class="bg-light d-flex align-items-center justify-content-center ad-detail-hero" style="height: 350px;">
+          <i class="fas fa-image fa-5x text-muted opacity-25"></i>
+      </div>
+      {% endif %}
+      
+      <div class="p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-start mb-4">
+          <div>
+              <h1 class="font-weight-bold mb-2" style="font-size: 2.5rem; letter-spacing: -0.03em;">{{ ad.title }}</h1>
+              <div class="d-flex align-items-center text-muted">
+                  <span class="mr-3"><i class="fas fa-tags mr-1"></i> Classified Ad</span>
+                  <span><i class="far fa-clock mr-1"></i> Posted {{ ad.updated_at|naturaltime }}</span>
+              </div>
+          </div>
+          <div class="d-flex align-items-center">
+            {% if user.is_authenticated %}
+            <div class="mr-3">
+                <a href="javascript:void(0)" 
+                   data-url="{% url 'ads:ad_unfavorite' ad.id %}" 
+                   data-id="{{ ad.id }}"
+                   class="fav-btn glass-card p-2 align-items-center justify-content-center {% if ad.id not in favorites %}d-none{% endif %}" 
+                   id="favorite_star_{{ad.id}}">
+                  <i class="fas fa-star text-warning"></i>
+                </a>
+                <a href="javascript:void(0)" 
+                   data-url="{% url 'ads:ad_favorite' ad.id %}" 
+                   data-id="{{ ad.id }}"
+                   class="fav-btn glass-card p-2 align-items-center justify-content-center {% if ad.id in favorites %}d-none{% endif %}" 
+                   id="unfavorite_star_{{ad.id}}">
+                  <i class="far fa-star text-muted"></i>
+                </a>
+            </div>
+            {% endif %}
+            
+            {% if ad.owner == user %}
+            <div class="d-flex">
+              <a href="{% url 'ads:ad_update' ad.id %}" class="btn btn-outline-primary rounded-pill px-3 mr-2">
+                <i class="fas fa-edit"></i>
+              </a>
+              <a href="{% url 'ads:ad_delete' ad.id %}" class="btn btn-outline-danger rounded-pill px-3">
+                <i class="fas fa-trash"></i>
+              </a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="ad-price mb-5" style="font-size: 2.8rem; color: var(--ads-primary);">
+            <span style="font-size: 1.5rem; vertical-align: top; margin-top: 5px; display: inline-block;">$</span>{{ ad.price|floatformat:2 }}
+        </div>
+        
+        <div class="mb-5">
+          <h5 class="font-weight-bold text-uppercase tracking-wider small text-muted mb-4 pb-2 border-bottom">About this item</h5>
+          <div class="leading-relaxed text-dark" style="font-size: 1.15rem; line-height: 1.8;">{{ ad.text|linebreaks }}</div>
+        </div>
+      </div>
+    </div>
 
-<div class="card">
-  <div class="card-header">
-    <h4>{{ ad.title }}</h4>
+    
+    <div class="glass-card p-4 p-md-5">
+      <h5 class="font-weight-bold mb-4"><i class="far fa-comments mr-2 text-primary"></i> Comments</h5>
+      
+      {% if user.is_authenticated %}
+      <div class="mb-4">
+        <form method="post" action="{% url 'ads:ad_comment_create' ad.id %}">
+          {% csrf_token %}
+          {% for field in comment_form %}
+          <div class="form-group mb-3">
+              {{ field }}
+              {% if field.errors %}
+              <div class="text-danger small mt-1">
+                  {{ field.errors|striptags }}
+              </div>
+              {% endif %}
+          </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-ads-primary px-4 mt-2">Post Comment</button>
+        </form>
+      </div>
+      {% endif %}
+
+
+      <div class="comments-list mt-4">
+        {% for comment in comments %}
+        <div class="ad-comment-bubble position-relative">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="font-weight-bold text-primary">{{ comment.owner.username }}</span>
+            <div class="d-flex align-items-center">
+              <small class="text-muted mr-2">{{ comment.updated_at|naturaltime }}</small>
+              {% if user == comment.owner %}
+              <a href="{% url 'ads:ad_comment_delete' comment.id %}" class="text-danger opacity-50 hover-opacity-100">
+                <i class="fas fa-trash-alt small"></i>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="comment-text">{{ comment.text }}</div>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center py-4">No comments yet. Be the first to say something!</p>
+        {% endfor %}
+      </div>
+    </div>
   </div>
-  <div class="card-body">
-    <h5 class="card-title">Details:</h5>
-    <p class="card-text">{{ ad.text }}</p>
-    <small>Price: {{ ad.price }}</small>
-    {% if ad.content_type %}
-        <img style="float:right; max-height: 25rem;" src="{% url 'ads:ad_picture' ad.id %}"
-        onclick="document.getElementById('overlay').style.display = 'block';">
-    {% endif %}
+  
+  <div class="col-lg-4">
+    <div class="glass-card p-4 mb-4">
+      <h5 class="font-weight-bold mb-4">Seller Information</h5>
+      <div class="d-flex align-items-center mb-4">
+          <img class="rounded-circle border mr-3" style="width: 60px; height: 60px;" src="{{ ad.owner|gravatar:120 }}" />
+          <div>
+              <div class="font-weight-bold text-dark" style="font-size: 1.1rem;">{{ ad.owner.username }}</div>
+              <small class="text-success"><i class="fas fa-check-circle mr-1"></i> Verified User</small>
+          </div>
+      </div>
+      <button class="btn btn-ads-primary btn-block py-3 mb-2">
+          <i class="fas fa-envelope mr-2"></i> Contact Seller
+      </button>
+      <button class="btn btn-outline-secondary btn-block rounded-pill py-2 small">
+          View Profile
+      </button>
+    </div>
+
+    <div class="glass-card p-4 sticky-top" style="top: 120px;">
+      <h5 class="font-weight-bold mb-4">Safety Tips</h5>
+      <ul class="list-unstyled small text-muted">
+        <li class="mb-3 d-flex align-items-start">
+            <i class="fas fa-handshake text-success mr-3 mt-1"></i> 
+            <span>Meet in a standard public place for your transaction.</span>
+        </li>
+        <li class="mb-3 d-flex align-items-start">
+            <i class="fas fa-search text-success mr-3 mt-1"></i> 
+            <span>Always inspect the item carefully before making a payment.</span>
+        </li>
+        <li class="mb-3 d-flex align-items-start">
+            <i class="fas fa-shield-alt text-success mr-3 mt-1"></i> 
+            <span>Never share your personal or banking details with strangers.</span>
+        </li>
+      </ul>
+      <hr class="my-4">
+      <a href="{% url 'ads:all' %}" class="btn btn-block btn-link text-muted font-weight-bold mt-2 text-decoration-none">
+        <i class="fas fa-arrow-left mr-2"></i> Browse more ads
+      </a>
+    </div>
   </div>
 </div>
 
-<a href="{% url 'ads:all' %}" class="btn btn-primary btn-sm mt-2">Go back all ads</a>
 
-{% if user.is_authenticated %}
-<br clear="all"/>
-<p>
-{% load crispy_forms_tags %}
-<form method="post" action="{% url 'ads:ad_comment_create' ad.id %}">
-    {% csrf_token %}
-    {{ comment_form|crispy }}
-<input type="submit" value="Submit" class="btn btn-warning btn-sm">
-<input type="submit" value="All Ads" class="btn btn-primary btn-sm" onclick="window.location.href='{% url 'ads:all' %}';return false;">
-</form>
-</p>
-{% endif %}
-{% for comment in comments %}
-<p><strong>{{ comment.owner }}: </strong> {{ comment.text }}
-<small>({{ comment.updated_at|naturaltime }})</small>
-{% if user == comment.owner %}
-<a href="{% url 'ads:ad_comment_delete' comment.id %}"><i class="fa fa-trash"></i></a>
-{% endif %}
-</p>
-{% endfor %}
+{% endblock %}
+
+{% block script %}
+<script>
+  $(document).ready(function() {
+    $(".fav-btn").click(function() {
+      const btn = $(this);
+      const url = btn.data("url");
+      const ad_id = btn.data("id");
+      
+      $.post(url, {}, function(rowz) {
+        $("#unfavorite_star_" + ad_id).toggleClass("d-none");
+        $("#favorite_star_" + ad_id).toggleClass("d-none");
+      }).fail(function(xhr) {
+        alert("Url failed with " + xhr.status + " " + url);
+      });
+    });
+  });
+</script>
 {% endblock %}

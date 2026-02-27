@@ -41,4 +41,5 @@ urlpatterns = [
         views.DeleteFavoriteView.as_view(),
         name="ad_unfavorite",
     ),
+    path("favorites", views.FavoriteListView.as_view(), name="ad_favorites"),
 ]

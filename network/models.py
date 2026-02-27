@@ -47,6 +47,10 @@ class Profile(models.Model):
         "self", symmetrical=False, related_name="followers", blank=True
     )
 
+    @property
+    def total_likes(self):
+        return Posts.objects.filter(user=self.user).aggregate(total=models.Count('like'))['total'] or 0
+
     def serialize(self):
         return {
             "user": self.user.username,

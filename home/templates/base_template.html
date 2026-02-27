@@ -1,93 +1,137 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Edit dj4e-samples/settings.py and add APP_NAME = 'DJ4E Samples' or similar -->
-    <meta charset="UTF-8" />
-    <meta name="description" content="Django Projects" />
-    <meta name="keywords" content="HTML, CSS, JavaScript, Python, Django" />
-    <meta name="author" content="Umair Ahmad" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}
-        {{ settings.APP_NAME }}
-      {% endblock title %}
-    </title>
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <link rel="stylesheet"
-          href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
-    <link rel="stylesheet"
-          href="https://use.fontawesome.com/releases/v5.8.1/css/v4-shims.css"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500&display=swap"
-          rel="stylesheet"/>
-    <link href="{% static 'home/styles.css' %}" rel="stylesheet" />
-    <link href="{% static 'home/adsstyles.css' %}" rel="stylesheet" />
-    {% block head %}
-    {% endblock head %}
-  </head>
-  <body {% block bg %}class="area"{% endblock bg %}>
-    {% block bg-anim %}
-      <ul class="circles">
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-      </ul>
-    {% endblock bg-anim %}
-    <div class="navbar navbar-expand-lg navbar-light bg-light p-0">
-      <ul class="navbar-nav m-auto">
-        <li class="nav-item">
-          <a class="nav-link p-1" href="#">
-          Please login to see full features of the apps.<span class="sr-only">(current)</span></a>
-        </li>
-      </ul>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Umair Ahmad Portfolio - Django Projects" />
+  <meta name="keywords" content="Portfolio, Django, Python, Web Developer, NYC" />
+  <meta name="author" content="Umair Ahmad" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>{% block title %}{{ settings.APP_NAME }}{% endblock title %}</title>
+
+  <!-- Bootstrap 4.5.2 -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <!-- Font Awesome 5.8.1 -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" />
+
+  <!-- Global Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="{% static 'home/styles.css' %}" rel="stylesheet" />
+  {% block head %}{% endblock head %}
+</head>
+
+<body {% block bg %}class="main-container" {% endblock bg %}>
+  {% block banner %}
+  {% if not user.is_authenticated %}
+  <!-- Premium Floating Login Notification -->
+  <div class="fixed-top w-100 d-flex justify-content-center pt-3" style="pointer-events: none; z-index: 2000;">
+    <div class="glass-card py-2 px-4 shadow-sm reveal-active"
+      style="pointer-events: auto; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+      <span class="small font-weight-bold text-dark">
+        <i class="fas fa-info-circle mr-2 text-primary"></i> Please login to access all features.
+      </span>
     </div>
-    {% block navbar %}
-    {% endblock navbar %}
-    <div class="container">
-      {% block welcome %}
-      {% endblock welcome %}
+  </div>
+  {% endif %}
+  {% endblock banner %}
+
+  {% block navbar %}{% endblock navbar %}
+
+  <main>
+    {% block welcome %}{% endblock welcome %}
+
+    <div class="container message-container">
       {% block messages %}
-        {% if messages %}
-          {% for msg in messages %}<div class="alert alert-{{ msg.level_tag }}" role="alert">{{ msg.message }}</div>{% endfor %}
-        {% endif %}
-      {% endblock messages %}
-      {% block content %}
-      {% endblock content %}
-    </div>
-    {% block footer %}
-      <div class="fixed-btn">
-        <a class="text-info" href="/">
-          <p class="go-home">Go back</p>
-          <div class="fixed-btn-circ">
-            <i class="fa fa-home fa-2x home-icon" aria-hidden="true"></i>
-          </div>
-        </a>
+      {% if messages %}
+      {% for msg in messages %}
+      <div class="alert alert-{{ msg.level_tag }} alert-dismissible fade show" role="alert">
+        {{ msg.message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-    {% endblock footer %}
-    {% block script %}
-    {% endblock script %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://maxcdn.bootstrapcd
+      {% endfor %}
+      {% endif %}
+      {% endblock messages %}
+    </div>
+
+    {% block content %}{% endblock content %}
+  </main>
+
+  {% block footer %}{% endblock footer %}
+
+  <!-- Back to top button -->
+  <a href="#" class="back-to-top" id="backToTop">
+    <i class="fas fa-chevron-up"></i>
+  </a>
+
+  <!-- Scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
   <script>
-    $(".nav .nav-item").on("click", function(){
-      $(".nav").find(".active").removeClass("active");
-      $(this).addClass("active");
+    $(document).ready(function () {
+      // Smooth scroll for internal links
+      $('a[href^="#"]').on('click', function (e) {
+        e.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+            scrollTop: target.offset().top - 80
+          }, 600);
+        }
+      });
+
+      // Navbar scroll effect and Back to top visibility
+      $(window).scroll(function () {
+        var scrollPos = $(this).scrollTop();
+
+        if (scrollPos > 50) {
+          $('.navbar-custom').addClass('navbar-scrolled');
+        } else {
+          $('.navbar-custom').removeClass('navbar-scrolled');
+        }
+
+        // Back to top visibility
+        if (scrollPos > 300) {
+          $('#backToTop').addClass('visible');
+        } else {
+          $('#backToTop').removeClass('visible');
+        }
+
+        // Active Link Highlight (ScrollSpy)
+        $('section, div[id]').each(function () {
+          var elementTop = $(this).offset().top - 100;
+          if (scrollPos >= elementTop) {
+            var id = $(this).attr('id');
+            $('.navbar-custom .nav-link').removeClass('active');
+            $('.navbar-custom .nav-link[href="#' + id + '"]').addClass('active');
+          }
+        });
+      });
+
+      // Intersection Observer for reveal animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-active');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     });
-</script>
+  </script>
+  {% block script %}{% endblock script %}
 </body>
+
 </html>

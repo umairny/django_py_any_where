@@ -1,33 +1,234 @@
-*{
-    margin: 0;
-    padding: 0;
+/* Wiki App - Modern Glassmorphic Design System */
+
+:root {
+    --wiki-primary: #8b5cf6;
+    --wiki-primary-dark: #6d28d9;
+    --wiki-primary-light: rgba(139, 92, 246, 0.1);
+    --wiki-secondary: #ec4899;
+    --wiki-bg: #f5f3ff;
+    --wiki-card-bg: rgba(255, 255, 255, 0.7);
+    --wiki-glass-border: rgba(255, 255, 255, 0.5);
+    --wiki-text-main: #1e1b4b;
+    --wiki-text-muted: #4b5563;
+    --wiki-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --wiki-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --radius-lg: 1.25rem;
+    --radius-xl: 1.5rem;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 body {
-    background-color: whitesmoke;
-    margin: auto;
-    color: black;
-}
-a {
-    color: gray;
-    text-decoration: none;
+    background-color: var(--wiki-bg);
+    color: var(--wiki-text-main);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
 }
 
-a:hover {
-    color: black;
-    text-decoration: none;
-}
-.sidebar {
-    height: 100vh;
-}
-
-textarea{
-    height: 50vh;
-    width: 80%;
-    border: 1px gray solid;
-    border-radius: 5px;
-    padding: 5px;
+/* Glassmorphism utility */
+.glass-card {
+    background: var(--wiki-card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--wiki-glass-border);
+    box-shadow: var(--wiki-shadow);
+    border-radius: var(--radius-lg);
+    transition: var(--transition);
 }
 
-.main-content{
-    margin-top: 80px;
+.glass-card:hover {
+    box-shadow: var(--wiki-shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* Navbar Upgrades */
+.navbar-wiki {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.75rem 0;
+    margin: 1.5rem auto;
+    width: 92%;
+    max-width: 1000px;
+    border-radius: 100px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.navbar-wiki .navbar-brand {
+    font-weight: 800;
+    font-size: 1.4rem;
+    background: linear-gradient(135deg, var(--wiki-primary), var(--wiki-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-left: 1.5rem !important;
+}
+
+.navbar-wiki .nav-link {
+    color: var(--wiki-text-main) !important;
+    font-weight: 600;
+    padding: 0.5rem 1.2rem !important;
+    border-radius: 50px;
+    transition: var(--transition);
+}
+
+.navbar-wiki .nav-link:hover {
+    background: var(--wiki-primary-light);
+    color: var(--wiki-primary) !important;
+}
+
+/* Main Content Area */
+.wiki-container {
+    max-width: 1000px;
+    margin: 110px auto 4rem;
+    padding: 0 1.5rem;
+}
+
+.wiki-card {
+    padding: 2.5rem;
+}
+
+/* Typography & Content */
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    color: var(--wiki-text-main);
+}
+
+.wiki-entry-content {
+    line-height: 1.7;
+    font-size: 1.1rem;
+}
+
+.wiki-entry-content h1,
+.wiki-entry-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--wiki-primary-light);
+    padding-bottom: 0.5rem;
+}
+
+.wiki-entry-content ul,
+.wiki-entry-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.wiki-entry-content pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+
+/* List Group Upgrades */
+.wiki-list-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem !important;
+    margin-bottom: 0.75rem !important;
+    padding: 1rem 1.5rem !important;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    text-decoration: none !important;
+    color: var(--wiki-text-main) !important;
+    font-weight: 600;
+}
+
+.wiki-list-item:hover {
+    border-color: var(--wiki-primary);
+    background: var(--wiki-primary-light);
+    transform: translateX(5px);
+}
+
+.wiki-list-item::before {
+    content: '\f15c';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    margin-right: 1rem;
+    color: var(--wiki-primary);
+}
+
+/* Form Styling */
+.wiki-form-group {
+    margin-bottom: 2rem;
+}
+
+.wiki-form-group label {
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.wiki-input,
+.wiki-textarea {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.5);
+    transition: var(--transition);
+}
+
+.wiki-input:focus,
+.wiki-textarea:focus {
+    outline: none;
+    border-color: var(--wiki-primary);
+    box-shadow: 0 0 0 4px var(--wiki-primary-light);
+    background: white;
+}
+
+.wiki-textarea {
+    min-height: 400px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+}
+
+/* Button Premium */
+.btn-wiki {
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    transition: var(--transition);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-wiki-primary {
+    background: linear-gradient(135deg, var(--wiki-primary), var(--wiki-primary-dark));
+    color: white !important;
+}
+
+.btn-wiki-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.3);
+}
+
+.btn-wiki-outline {
+    background: transparent;
+    border: 2px solid var(--wiki-primary);
+    color: var(--wiki-primary) !important;
+}
+
+.btn-wiki-outline:hover {
+    background: var(--wiki-primary-light);
+}
+
+/* Animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease-out;
+}
+
+.reveal-active {
+    opacity: 1;
+    transform: translateY(0);
 }

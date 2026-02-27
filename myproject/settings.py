@@ -1,4 +1,4 @@
-import django_heroku
+# import django_heroku
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -31,11 +31,8 @@ INSTALLED_APPS = [
 
     # Extensions - installed with pip3 / requirements.txt
     'django_extensions',
-    'rest_framework',
     'home.apps.HomeConfig',
     'crispy_forms',
-    'social_django',
-    'taggit',
     'nested_admin',
 
     #apps
@@ -49,8 +46,7 @@ INSTALLED_APPS = [
 # When we get to crispy forms :)
 CRISPY_TEMPLATE_PACK = 'bootstrap4'  # Add
 
-# When we get to tagging
-TAGGIT_CASE_INSENSITIVE = True
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -89,13 +85,14 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
 """
 DATABASES = {
     'default': {
@@ -109,6 +106,7 @@ DATABASES = {
         },
     }
 }
+"""
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
@@ -144,14 +142,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Add the settings below
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    )
-}
 
 
 # Static files (CSS, JavaScript, Images)
@@ -162,4 +153,4 @@ STATIC_URL = '/static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())

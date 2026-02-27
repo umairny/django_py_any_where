@@ -1,43 +1,81 @@
 {% extends "base_template.html" %}
 {% block bg %}class="adsbg"{% endblock %}
 {% block bg-anim%}{%endblock%}
+{% load static %}
+{% block head %}
+
+<link href="{% static 'ads/styles.css' %}" rel="stylesheet" />
+{% endblock %}
+
 {% block navbar %}
 {% load app_tags %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="/ads">Home</a>
-    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-    {% if user.is_authenticated %}
-      {% url 'ads' as ads %}
-      <li {% if request.get_full_path == ads %} class="nav-item active"{% endif %}>
-          <a class="nav-link" href="{% url 'ads:all' %}">Hi: {{ user }}</a></li>
-    {% endif %}
-    </ul>
-    <ul class="navbar-nav my-2 my-lg-0">
+<nav class="navbar navbar-expand-lg navbar-light navbar-ads fixed-top">
+  <div class="container navbar-container-ads">
+    <a class="navbar-brand d-flex align-items-center" href="{% url 'ads:all' %}">
+      <i class="fas fa-feather-alt mr-2" style="background: linear-gradient(135deg, var(--ads-primary), var(--ads-accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"></i>Ads App
+    </a>
+
+    <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#adsNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="adsNavbar">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'all' and not search %}active{% endif %}" href="{% url 'ads:all' %}">Marketplace</a>
+        </li>
         {% if user.is_authenticated %}
         <li class="nav-item">
-        <a class="nav-link" href="{% url 'ads:ad_create' %}">Create Ad</a>
+          <a class="nav-link {% if 'create' in request.path %}active{% endif %}" href="{% url 'ads:ad_create' %}">Post Ad</a>
         </li>
-        <li class="dropdown">
-            <a href="#" data-toggle="dropdown" class="btn btn-dark dropdown-toggle">
-                <img style="width: 25px;" src="{{ user|gravatar:60 }}"/><b class="caret"></b>
-            </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a>
-            </div>
-        </li>
-        {% else %}
         <li class="nav-item">
-        <a class="nav-link" href="{% url 'login' %}?next={% url 'ads:all' %}">Login</a>
+            <a class="nav-link {% if 'favorites' in request.path %}active{% endif %}" href="{% url 'ads:ad_favorites' %}"><i class="far fa-heart mr-1"></i> Saved</a>
         </li>
         {% endif %}
-    </ul>
+      </ul>
+      
+      <div class="navbar-nav align-items-center">
+        {% if user.is_authenticated %}
+        <div class="nav-item dropdown">
+          <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle d-flex align-items-center auth-nav-btn py-1">
+            <img class="rounded-circle border mr-2" style="width: 32px; height: 32px; object-fit: cover;" src="{{ user|gravatar:60 }}" />
+            <span class="small font-weight-bold">{{ user.username }}</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right glass-card border-0 shadow-lg p-2 mt-3" style="min-width: 200px;">
+            <div class="px-3 py-2 border-bottom mb-2">
+                <div class="font-weight-bold truncate">{{ user.username }}</div>
+                <div class="small text-muted truncate">{{ user.email }}</div>
+            </div>
+            <a class="dropdown-item rounded-lg py-2" href="{% url 'ads:ad_create' %}">
+                <i class="fas fa-plus mr-2 opacity-50"></i> Create Listing
+            </a>
+            <hr class="my-1">
+            <form action="{% url 'logout' %}?next={% url 'ads:all' %}" method="POST" id="logout-form-ads-menu">
+              {% csrf_token %}
+              <button type="submit" class="dropdown-item rounded-lg text-danger d-flex align-items-center font-weight-bold py-2" style="border:none; background:none; width: 100%;">
+                <i class="fas fa-sign-out-alt mr-2 opacity-50"></i> Logout
+              </button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+        <a class="btn btn-ads-primary auth-nav-btn px-4 py-2" href="{% url 'login' %}?next={% url 'ads:all' %}">Sign In</a>
+        {% endif %}
+      </div>
+    </div>
+
   </div>
-</div>
 </nav>
+
+<script>
+$(window).scroll(function() {
+    if ($(this).scrollTop() > 50) {
+        $('.navbar-ads').addClass('navbar-scrolled');
+    } else {
+        $('.navbar-ads').removeClass('navbar-scrolled');
+    }
+});
+</script>
+<div style="height: 100px;"></div>
 {% endblock %}
+

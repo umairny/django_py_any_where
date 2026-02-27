@@ -1,11 +1,24 @@
-{% extends "base_menu.html" %} {% block content %}
-<h1>Delete Ad</h1>
+{% extends "base_menu.html" %}
+{% block content %}
 
-<p>Are you sure you want to delete the ad: {{ ad }}?</p>
+<div class="glass-card max-width-700 mx-auto p-5 text-center my-5 shadow-lg">
+    <div class="mb-4">
+        <i class="fas fa-exclamation-triangle fa-4x text-danger opacity-50"></i>
+    </div>
+    
+    <h2 class="font-weight-bold mb-3">Delete Listing?</h2>
+    <p class="text-muted mb-5 leading-relaxed">Are you sure you want to delete <strong>"{{ ad.title }}"</strong>? This action cannot be undone.</p>
 
-<form action="" method="POST">
-  {% csrf_token %}
-  <input type="submit" value="Yes, delete." class="btn btn-warning" />
-  <a href="{% url 'ads:ad_detail' ad.id %}" class="btn btn-info">Cancel</a>
-</form>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-danger rounded-pill px-5 py-3 font-weight-bold mr-3 shadow-sm">
+                <i class="fas fa-trash-alt mr-2"></i> Yes, Delete
+            </button>
+            <a href="{% url 'ads:ad_detail' ad.id %}" class="btn btn-outline-secondary rounded-pill px-5 py-3 font-weight-bold">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
 {% endblock %}

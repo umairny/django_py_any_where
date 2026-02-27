@@ -1,99 +1,194 @@
 {% extends "auctions/layout.html" %}
+{% load humanize %}
 
-{% block content %}
-<h2>{{list.title}}</h2>
-<div class="card mb-3" style="max-width: 100%;">
-    <div class="row no-gutters">
-        <div class="col-md-4">
+{% block auctions_content %}
+<div class="row g-5">
+    <!-- Left: Hero Image & Category -->
+    <div class="col-lg-7">
+        <div class="listing-hero glass-panel p-2 bg-white">
+            {% if list.closed %}
+            <div class="status-label status-closed" style="font-size: 1.2rem; padding: 1rem 2rem;">Auction Closed</div>
+            {% else %}
+            <div class="status-label status-active">Active Auction</div>
+            {% endif %}
+
             {% if list.content_type %}
-                <img style="width:100%; border:3px solid black;" src="{% url 'auctions:list_picture' list.id %}">
+            <img src="{% url 'auctions:list_picture' list.id %}" class="w-100 rounded-lg shadow-sm"
+                style="max-height: 600px; object-fit: cover;" alt="{{ list.title }}">
+            {% else %}
+            <div class="d-flex align-items-center justify-content-center bg-light rounded-lg" style="height: 500px;">
+                <i class="fas fa-image fa-5x text-muted opacity-25"></i>
+            </div>
             {% endif %}
         </div>
-        <div class="col-md-8">
-            <div class="card-body">
-                <p class="card-text">Details: {{list.details}} </p>
-                <hr />
-                <p>Item price: &#36;{{list.price}} <span style="color:red; float:right;">Top bid: &#36;{{ list.cur_price }} <br /> Total bids: {{ list.no_of_bids }}</span> </p>
-                <br />
-                <hr />
-                                
-                <p><small>Category: </small>{{list.category}} </p>
-                
-                <p class="mt-2"><small>Posted by: </small>{{ list.user }} <span style="float:right; color:gray;"> <small>Created at: {{list.created}}</small> </span> </p>
-                <hr />
 
-             {% if not list.closed %}
-             {% if list.user != request.user %}
-                <form method="POST" enctype="multipart/form-data">
+        <div class="mt-4 glass-card p-4">
+            <h4 class="font-weight-bold mb-3"><i class="fas fa-align-left mr-2 text-primary opacity-50"></i>Description
+            </h4>
+            <p class="text-muted leading-relaxed" style="font-size: 1.1rem;">{{ list.details }}</p>
+
+            <div class="d-flex flex-wrap gap-3 mt-4">
+                <div class="badge badge-primary-soft p-3 rounded-pill px-4">
+                    <i class="fas fa-tag mr-2"></i>{{ list.category }}
+                </div>
+                <div class="badge badge-light p-3 rounded-pill px-4">
+                    <i class="fas fa-user-circle mr-2 text-primary"></i>Seller: {{ list.user.username }}
+                </div>
+                <div class="badge badge-light p-3 rounded-pill px-4">
+                    <i class="far fa-clock mr-2 text-primary"></i>Posted {{ list.created|naturaltime }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Bidding Controls & Status -->
+    <div class="col-lg-5">
+        <div class="glass-card listing-content shadow-lg position-sticky" style="top: 100px;">
+            <h1 class="font-weight-bold mb-4" style="font-size: 2.5rem; letter-spacing: -1px;">{{ list.title }}</h1>
+
+            <div class="p-4 rounded-xl bg-white-soft mb-4"
+                style="background: rgba(255,255,255,0.4); border: 1px solid var(--auction-border);">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted font-weight-bold uppercase tracking-wider small">
+                        {% if list.no_of_bids > 0%}Current Top Bid{% else %}Starting Price{% endif %}</span>
+                    {% if not list.closed %}
+                    <span class="badge badge-pill badge-primary-soft animate-pulse">{{ list.no_of_bids }} Bids
+                        Total</span>
+                    {% endif %}
+                </div>
+                <div class="d-flex align-items-baseline">
+                    <span class="h1 font-weight-bold text-gradient mb-0" style="font-size: 3.5rem;">
+                        ${{list.cur_price|floatformat:2 }}</span>
+                    <small class="text-muted ml-2">USD</small>
+                </div>
+            </div>
+
+            {% if not list.closed %}
+            {% if user.is_authenticated %}
+            {% if list.user != request.user %}
+            <div class="bid-input-group glass-panel">
+                <h5 class="font-weight-bold mb-3"><i class="fas fa-hammer mr-2 text-amber"></i>Place Your Bid</h5>
+                <form method="POST" enctype="multipart/form-data" class="d-flex gap-2">
                     {% csrf_token %}
                     {% for field in form %}
-                        <div class="form-group">
-                            <input class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="your {{ field.html_name }}" required /> 
-                        </div>
-                        <input class="btn btn-primary" type="submit" value="Bid">
-                        <div style="color:red;">{{ field.errors }}</div>
+                    <div class="flex-grow-1">
+                        <input type="number" step="0.01" class="form-control auth-input text-dark border-primary"
+                            id="{{ field.id_for_label }}" name="{{ field.html_name }}"
+                            placeholder="Enter ${{ list.cur_price|add:'1' }} or more" required
+                            style="height: 54px; background: white;">
+                    </div>
+                    <button class="auction-btn-primary px-4" type="submit">Place Bid</button>
                     {% endfor %}
                 </form>
-                <hr />
+                {% if form.errors %}
+                <div class="mt-2 text-danger small">
+                    <i class="fas fa-exclamation-circle mr-1"></i> {{ form.non_field_errors|striptags }}
+                </div>
                 {% endif %}
-
-                {% if user in list.watchlistuser.all %}
-                <a name="watchlist" class="btn btn-info" href="{% url 'auctions:watchlist' list.id %}" role="button">Remove
-                    Watchlist</a>
-                {% else %}
-                <a name="watchlist" class="btn btn-info" href="{% url 'auctions:watchlist' list.id %}" role="button">Add
-                    Watchlist</a>
-                {% endif %}
-
-                {% if list.user == request.user %}
-                    <a name="close" class="btn btn-danger" href="{% url 'auctions:closed' list.id %}" role="button">Close</a>
-                {% endif %}
-                <hr>
-                <a name="comment" class="btn btn-info" href="{% url 'auctions:comment' list.id %}" role="button">Comments</a>
+            </div>
             {% else %}
-                    {% if request.user == list.user %}
-                        {% if list.current_winning_bidder %}
-                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
-                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
-                            <h4>Your item was SOLD to {{ list.current_winning_bidder }} in &#36;{{ list.cur_price }}</h4>
-                        {% else %}
-                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
-                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
-                            <div>Bidding Closed. Sorry <strong> {{ list.user }} </strong> Nobody showed any interest.</div>
-                        {% endif %}
-                    {% else %}
-                        {%  if list.current_winning_bidder == user %}
-                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
-                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">You Won</h1></div>
-                            <h4>Congratulations!!! You have won this auction. In &#36;{{ list.cur_price }}</h4>
-                        {% elif list.current_winning_bidder is None %}
-                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
-                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
-                            <div>Nobody showed any interest on this item and it has been closed.</div>
-                        {% else %}
-                            <div style="position:absolute; top:30%; left:20%; border: 2px solid red;
-                            border-radius: 5px; background: white; opacity: 0.7;"><h1 class="p-2">Closed</h1></div>
-                            <div>An anonymous user has won this auction!</div>
-                        {% endif %}
-                    {% endif %}
+            <div class="alert alert-info border-0 rounded-xl p-4">
+                <i class="fas fa-info-circle mr-2 h5 mb-0"></i> You are the seller of this item.
+                <div class="mt-3">
+                    <a href="{% url 'auctions:closed' list.id %}"
+                        class="btn btn-danger btn-block rounded-pill font-weight-bold py-3 shadow-lg">Close Auction
+                        Now</a>
+                </div>
+            </div>
             {% endif %}
 
+            <div class="d-flex gap-3 mt-4">
+                {% if user in list.watchlistuser.all %}
+                <a href="{% url 'auctions:watchlist' list.id %}"
+                    class="btn btn-outline-danger btn-block rounded-pill font-weight-bold py-3">
+                    <i class="fas fa-heart-broken mr-2"></i>Remove Watchlist
+                </a>
+                {% else %}
+                <a href="{% url 'auctions:watchlist' list.id %}"
+                    class="btn btn-outline-primary btn-block rounded-pill font-weight-bold py-3">
+                    <i class="fas fa-heart mr-2"></i>Add to Watchlist
+                </a>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="alert alert-light border-0 rounded-xl p-4 text-center">
+                <p class="mb-3 font-weight-bold text-muted">Join the auction to place your bid!</p>
+                <a href="{% url 'login' %}?next={% url 'auctions:listing' list.id %}"
+                    class="btn btn-primary btn-block rounded-pill font-weight-bold py-3 shadow-blue">Sign In to Bid</a>
+            </div>
+            {% endif %}
+            {% else %}
+            <!-- Auction Closed Status -->
+            <div class="glass-card p-4 border-danger border-2 text-center" style="background: rgba(239, 68, 68, 0.05);">
+                {% if request.user == list.user %}
+                {% if list.current_winning_bidder %}
+                <div class="h3 font-weight-bold text-danger mb-2">Sold!</div>
+                <p class="mb-0">Winner: <strong>{{ list.current_winning_bidder }}</strong></p>
+                <p class="text-muted">Closing Price: ${{ list.cur_price|floatformat:2 }}</p>
+                {% else %}
+                <div class="h4 font-weight-bold text-muted mb-0">Closed - No Bids</div>
+                {% endif %}
+                {% else %}
+                {% if list.current_winning_bidder == user %}
+                <div class="h2 font-weight-bold text-success mb-2"><i class="fas fa-trophy mr-2"></i>You Won!</div>
+                <p class="mb-0">Finalizing at ${{ list.cur_price|floatformat:2 }}</p>
+                {% elif list.current_winning_bidder is None %}
+                <div class="h4 font-weight-bold text-muted mb-0">Closed - Unsold</div>
+                {% else %}
+                <div class="h4 font-weight-bold text-muted mb-0">Sold to another bidder</div>
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Social Links / Share (Static Placeholder) -->
+            <div class="mt-5 pt-4 border-top">
+                <h6 class="text-uppercase tracking-wider font-weight-bold text-muted small mb-3">Share Listing</h6>
+                <div class="d-flex gap-2">
+                    <button class="social-circle border-0"><i class="fab fa-facebook-f"></i></button>
+                    <button class="social-circle border-0"><i class="fab fa-twitter"></i></button>
+                    <button class="social-circle border-0"><i class="fas fa-link"></i></button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-    <h4 class="mt-4">Comments:</h4>
-    <hr />
-            <div class="comment">
+
+<!-- Comments Section -->
+<div class="row mt-5 pt-5">
+    <div class="col-lg-7">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="font-weight-bold"><i class="fas fa-comments mr-3 text-primary"></i>Community Discussion</h3>
+            {% if not list.closed %}
+            <a href="{% url 'auctions:comment' list.id %}" class="btn btn-primary-soft rounded-pill font-weight-bold">
+                <i class="fas fa-plus mr-2"></i>Add Comment
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="comments-container">
             {% for comment in list.comments.all %}
-                <div class="row each-comment">
-                    <div class="col">
-                        <p><strong style="color: gray;">{{ comment.user }}</strong> commented: <span class="small" style="color:gray; float: right;"> {{ comment.com_time }} </span></p>
-                        <h5> {{ comment.comment }}</h5>
-                        <hr />
+            <div class="comment-bubble glass-card mb-3 p-4">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-circle fa-2x mr-3 text-primary opacity-50"></i>
+                        <div>
+                            <h6 class="font-weight-bold mb-0 text-dark">{{ comment.user.username }}</h6>
+                            <small class="text-muted">{{ comment.com_time|naturaltime }}</small>
+                        </div>
                     </div>
                 </div>
-            {% endfor %}
+                <div class="pl-5">
+                    <p class="mb-0 text-muted" style="font-size: 1.05rem; line-height: 1.6;">{{ comment.comment }}</p>
+                </div>
             </div>
-
+            {% empty %}
+            <div class="text-center py-5 glass-card">
+                <i class="far fa-comments fa-3x text-muted opacity-25 mb-3"></i>
+                <p class="text-muted mb-0">No comments yet. Be the first to start the conversation!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

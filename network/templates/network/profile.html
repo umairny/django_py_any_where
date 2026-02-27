@@ -3,49 +3,84 @@
 {% load static %}
 
 {% block content %}
-<div class="row mt-3" >
-    <div class="col-md-4 col-xs-12">
-    {% if profile.content_type %}
-        <img class="card-img-top" style="width:100%; border:3px solid black;" src="{% url 'network:prof_picture' profile.id %}">
-    {% else %}
-        <img src="{% static 'network/img/IMG.jpg' %}" class="card-img-left"
-                style="width:100%; border:3px solid black;" alt="Image">
-    {% endif %}
-    </div>
-    <div class="col-md-8 col-xs-12">
-        <div class="card-body">
-            <h5 class="card-title">User Name: <strong>{{ profile.user }}</strong></h5>
-        </div>
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item">Full Name: {{ profile.full_name }}</li>
-            <li class="list-group-item">Email: {{ profile.user.email }}</li>
-            <li class="list-group-item">Location: {{ profile.location }}</li>
-            <li class="list-group-item">Date of birth: {{ profile.birth_date }}</li>
-            <li class="list-group-item">Followers: <span id="total_follower"> {{ profile.follow.count }}</span></li>
-        </ul>
-        <div class="card-body">
-            {% if user == profile.user %}
-                <a href="{% url 'network:edit_profile' profile.user.id %}" class="card-link">Edit Profile</a>
+<div class="profile-page-container reveal">
+    <div class="glass-card profile-header mb-5">
+        <div class="profile-avatar-container">
+            {% if profile.content_type %}
+            <img class="profile-img" src="{% url 'network:prof_picture' profile.id %}" alt="{{ profile.user }}">
             {% else %}
-                <button onclick="follow({{profile.user.id}})" class="btn btn-info">
-                    {% if follower %}
-                        <span id="follow{{profile.user.id}}">Unfollow</span>
-                    {% else %}
-                        <span id="follow{{profile.user.id}}">Follow</span>
-                    {% endif %}
-                </button>
+            <div
+                class="profile-img bg-primary d-flex align-items-center justify-content-center text-white display-4 font-weight-bold">
+                {{ profile.user.username|first|upper }}
+            </div>
+            {% endif %}
+        </div>
+
+        <h2 class="font-weight-extra-bold mb-1">{{ profile.full_name|default:profile.user.username }}</h2>
+        <p class="text-muted"><i class="fas fa-at mr-1"></i>{{ profile.user.username }}</p>
+
+        {% if profile.location %}
+        <p class="text-muted small mb-3">
+            <i class="fas fa-map-marker-alt mr-2 text-primary opacity-75"></i> {{ profile.location }}
+        </p>
+        {% endif %}
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                <span class="stat-value">{{ page_obj.paginator.count }}</span>
+                <span class="stat-label">Posts</span>
+            </div>
+            <div class="stat-item border-left border-right">
+                <span class="stat-value" id="total_follower">{{ profile.follow.count }}</span>
+                <span class="stat-label">Followers</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ profile.total_likes }}</span>
+                <span class="stat-label">Likes</span>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            {% if user == profile.user %}
+            <a href="{% url 'network:edit_profile' profile.user.id %}"
+                class="btn btn-outline-primary px-4 rounded-pill font-weight-bold">
+                <i class="fas fa-user-edit mr-2"></i> Edit Profile
+            </a>
+            {% else %}
+            <button id="follow-btn" data-user-id="{{ profile.user.id }}"
+                class="btn btn-primary px-5 rounded-pill font-weight-bold shadow-sm">
+                {% if follower %}
+                <span id="follow{{profile.user.id}}">Unfollow</span>
+                {% else %}
+                <span id="follow{{profile.user.id}}">Follow</span>
+                {% endif %}
+            </button>
             {% endif %}
         </div>
     </div>
 </div>
 
-<div>
-    <hr />
-    <h5> <i class="fa fa-user-circle" aria-hidden="true"></i><strong> {{ profile.user }}&apos;s </strong> all posts.</h5>
-    
+<div class="profile-feed-container">
+    <div class="feed-header mb-4 d-flex align-items-center">
+        <h5 class="font-weight-bold mb-0 mr-3">
+            <i class="fas fa-stream mr-2 text-primary opacity-50"></i> {{ profile.user.username }}'s Posts
+        </h5>
+        <div class="flex-grow-1 border-bottom opacity-10"></div>
+    </div>
+
     {% include "network/posts.html" %}
 </div>
 <script src="{% static 'network/main.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $("#follow-btn").on("click", function () {
+            const userId = $(this).data("user-id");
+            if (typeof follow === "function") {
+                follow(userId);
+            } else {
+                console.error("follow function not found in main.js");
+            }
+        });
+    });
+</script>
 {% endblock %}
-
-

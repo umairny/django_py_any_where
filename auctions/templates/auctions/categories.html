@@ -1,19 +1,37 @@
 {% extends "auctions/layout.html" %}
+{% load humanize %}
 
-{% block content %}
+{% block auctions_content %}
+<div class="mb-5">
+    <h1 class="font-weight-bold mb-4">{{ title }}</h1>
 
-<h4 class="diplay-4" >{{ title }}</h4>
-<hr />
-<div class="mb-2 bg-info">
-    {% for category in categories %}
-        <a  style="color:white;" class="btn btn-outline-none" href="{% url 'auctions:category' category %}">{{ category }}</a>
-    {% endfor %}
+    <div class="glass-card p-3 d-flex flex-wrap gap-2 shadow-sm" style="border-radius: 50px;">
+        <a href="{% url 'auctions:categories' %}"
+            class="btn {% if not request.resolver_match.kwargs.category %}btn-primary{% else %}btn-light{% endif %} rounded-pill px-4 font-weight-bold">
+            All Categories
+        </a>
+        {% for category in categories %}
+        <a href="{% url 'auctions:category' category %}"
+            class="btn {% if request.resolver_match.kwargs.category == category %}btn-primary{% else %}btn-light{% endif %} rounded-pill px-4 font-weight-bold transition-all">
+            {{ category }}
+        </a>
+        {% endfor %}
+    </div>
 </div>
 
-<div class="container-fluid card-columns">
-
+<div class="row g-4">
     {% include "auctions/items.html" %}
 
+    {% if not listing %}
+    <div class="col-12 text-center py-5 glass-card">
+        <i class="fas fa-box-open fa-4x text-muted opacity-25 mb-4"></i>
+        <h3 class="text-muted font-weight-bold">No active listings in this category</h3>
+        <p class="text-muted">Be the first to list an item here!</p>
+        <a href="{% url 'auctions:create' %}"
+            class="btn btn-primary rounded-pill px-5 py-3 mt-3 font-weight-bold shadow-blue">
+            Create Listing
+        </a>
+    </div>
+    {% endif %}
 </div>
-
 {% endblock %}

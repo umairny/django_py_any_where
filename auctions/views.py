@@ -161,7 +161,11 @@ def closed(request, list_id):
 
 def category(request, category):
     #get the catg filter via str 
-    listings = Listing.objects.filter(closed=False, category=category)
+    if request.user.is_authenticated:
+        listings = Listing.objects.filter(category=category)
+    else:
+        listings = Listing.objects.filter(closed=False, category=category)
+
     #Show the catg Buttons on screen via str repres
     categories = list(set([listing.category for listing in Listing.objects.all() if listing.category]))
     return render(request, "auctions/categories.html", {
@@ -171,13 +175,22 @@ def category(request, category):
         'title': "Product Categories",
     })
 
+
 def categories(request):
     #Show the catg on screen via str represent
     categories = list(set([listing.category for listing in Listing.objects.all() if listing.category]))
+    if request.user.is_authenticated:
+        listing = Listing.objects.all()
+    else:
+        listing = Listing.objects.filter(closed=False)
+        
     return render(request, "auctions/categories.html", {
         'categories': categories,
+        'listing': listing,
         'title': "Product Categories",
     })
+
+
 
 def stream_file(request, pk):
     list = get_object_or_404(Listing, id=pk)

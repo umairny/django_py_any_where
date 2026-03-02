@@ -12,11 +12,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'Optional default value')
 
 APP_NAME = 'My django projects'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Automatically set DEBUG to False if on PythonAnywhere
+DEBUG = os.environ.get('PYTHONANYWHERE_DOMAIN') is None
 
-ALLOWED_HOSTS = ['*']
-
+# Allow your site to run
+ALLOWED_HOSTS = ['umairny.pythonanywhere.com', 'localhost', '127.0.0.1', '*']
 
 # Application definition
 
@@ -59,7 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Use simpler WhiteNoise storage to ensure filenames match exactly
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 ROOT_URLCONF = 'myproject.urls'
 

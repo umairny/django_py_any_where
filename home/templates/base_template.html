@@ -26,9 +26,10 @@
 
 <body {% block bg %}class="main-container" {% endblock bg %}>
   {% block banner %}
-  {% if not user.is_authenticated %}
+  {% if not user.is_authenticated and request.resolver_match.app_name != 'wiki' %}
   <!-- Premium Floating Login Notification -->
-  <div class="fixed-top w-100 d-flex justify-content-center pt-3" style="pointer-events: none; z-index: 2000;">
+  <div class="position-fixed d-flex justify-content-end pr-3 pb-3"
+    style="right: 0; bottom: 0; pointer-events: none; z-index: 2000;">
     <div class="glass-card py-2 px-4 shadow-sm reveal-active"
       style="pointer-events: auto; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
       <span class="small font-weight-bold text-dark">
